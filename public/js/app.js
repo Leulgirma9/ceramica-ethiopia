@@ -158,6 +158,7 @@ const Router = {
     '/catalog':     'catalog',
     '/categories':  'categories',
     '/projects':    'projects',
+    '/color-studio':'color-studio',
     '/about':       'about',
     '/contact':     'contact',
     '/price-list':  'price-list',
@@ -227,6 +228,7 @@ const Pages = {
     renderCategoriesFullGrid();
   },
   projects() { renderProjectsPage(); },
+  'color-studio'() { initColorStudioPage(); },
   product() { /* rendered on demand */ },
   about() { applyAboutContent(); },
   contact() { renderContactPage(); },
@@ -2027,9 +2029,633 @@ qs('#confirm-delete-btn')?.addEventListener('click', async () => {
 qs('#confirm-cancel-btn')?.addEventListener('click', () => { qs('#confirm-modal-backdrop').style.display = 'none'; App.deleteCallback = null; });
 qs('#confirm-modal-close')?.addEventListener('click', () => { qs('#confirm-modal-backdrop').style.display = 'none'; App.deleteCallback = null; });
 
-qsa('.modal-backdrop').forEach(bd => {
-  bd.addEventListener('click', (e) => { if (e.target === bd) { bd.style.display = 'none'; App.deleteCallback = null; } });
-});
+// ============================================================
+// FEATURE 2: INTERACTIVE COLOR STUDIO ENGINE (DEMO ONLY)
+// ============================================================
+const StudioState = {
+  activeSurface: 'floor',
+  activeRule: 'monochromatic',
+  isComparing: false,
+
+  // Baseline default showroom setting (Atlas Concorde aesthetic)
+  baseline: {
+    floor:    { color: '#C5BEB3', name: 'Limestone Beige', productCode: 'PTL-001' },
+    wall:     { color: '#E8E5DF', name: 'Chalk White', productCode: 'CTL-001' },
+    accent:   { color: '#D3CBC0', name: 'Greige Fluted', productCode: 'CTL-003' },
+    vanity:   { color: '#7D6551', name: 'Natural Walnut', productCode: 'SAN-002' },
+    fixtures: { color: '#C4A882', name: 'Brushed Brass', productCode: 'FAU-001' }
+  },
+
+  // Current active customized room state
+  current: {
+    floor:    { color: '#C5BEB3', name: 'Limestone Beige', productCode: 'PTL-001' },
+    wall:     { color: '#E8E5DF', name: 'Chalk White', productCode: 'CTL-001' },
+    accent:   { color: '#D3CBC0', name: 'Greige Fluted', productCode: 'CTL-003' },
+    vanity:   { color: '#7D6551', name: 'Natural Walnut', productCode: 'SAN-002' },
+    fixtures: { color: '#C4A882', name: 'Brushed Brass', productCode: 'FAU-001' }
+  }
+};
+
+// Preset Coordinated Palettes (Atlas Concorde Reference)
+const studioPalettes = [
+  {
+    id: 'warm-neutrals',
+    name: 'Warm Neutrals',
+    rule: 'monochromatic',
+    desc: 'Soft ivory, warm beige, and natural walnut for calming, light-filled sanctuaries.',
+    colors: {
+      floor:    { color: '#D8D1C7', name: 'Travertine Ivory', productCode: 'PTL-001' },
+      wall:     { color: '#F4F1EA', name: 'Chalk Silk', productCode: 'CTL-001' },
+      accent:   { color: '#C5BAAB', name: 'Warm Greige Relief', productCode: 'CTL-003' },
+      vanity:   { color: '#8A6D56', name: 'Warm Honey Oak', productCode: 'SAN-002' },
+      fixtures: { color: '#C4A882', name: 'Brushed Brass', productCode: 'FAU-001' }
+    }
+  },
+  {
+    id: 'cool-neutrals',
+    name: 'Cool Neutrals',
+    rule: 'monochromatic',
+    desc: 'Pure crisp white, architectural silver grey, and charcoal for modern minimalist clarity.',
+    colors: {
+      floor:    { color: '#54585B', name: 'Industrial Slate', productCode: 'PTL-002' },
+      wall:     { color: '#F0F2F4', name: 'Pure Ice White', productCode: 'CTL-001' },
+      accent:   { color: '#9DA4A9', name: 'Concrete Grey', productCode: 'PTL-002' },
+      vanity:   { color: '#2B2D2F', name: 'Matte Charcoal', productCode: 'SAN-002' },
+      fixtures: { color: '#D0D8DE', name: 'Mirror Chrome', productCode: 'FAU-001' }
+    }
+  },
+  {
+    id: 'earthy-mineral',
+    name: 'Earthy Mineral',
+    rule: 'analogous',
+    desc: 'Sun-baked terracotta, raw desert sand, and olive tones inspired by Mediterranean clay.',
+    colors: {
+      floor:    { color: '#9E6D53', name: 'Tuscan Terracotta', productCode: 'OUT-001' },
+      wall:     { color: '#EDE3D2', name: 'Sandstone Cream', productCode: 'CTL-003' },
+      accent:   { color: '#6A5E50', name: 'Raw Basalt Stone', productCode: 'PTL-001' },
+      vanity:   { color: '#4D4238', name: 'Smoked Timber', productCode: 'SAN-002' },
+      fixtures: { color: '#1E1E1E', name: 'Matte Nero Black', productCode: 'FAU-002' }
+    }
+  },
+  {
+    id: 'natural-organic',
+    name: 'Natural Organic',
+    rule: 'neutral-accent',
+    desc: 'Subtle sage green accents paired with cream marble and organic Scandinavian blonde wood.',
+    colors: {
+      floor:    { color: '#D5CEC2', name: 'Alpine Limestone', productCode: 'PTL-001' },
+      wall:     { color: '#FAF8F4', name: 'Porcelain Cream', productCode: 'CTL-001' },
+      accent:   { color: '#7E9181', name: 'Botanical Sage', productCode: 'CTL-003' },
+      vanity:   { color: '#A08061', name: 'Nordic Oak Plank', productCode: 'SAN-002' },
+      fixtures: { color: '#C4A882', name: 'Brushed Brass', productCode: 'FAU-001' }
+    }
+  },
+  {
+    id: 'modern-contrast',
+    name: 'Modern Contrast',
+    rule: 'complementary',
+    desc: 'Bold interplay between high-gloss Calacatta marble, matte jet-black, and architectural grey.',
+    colors: {
+      floor:    { color: '#242526', name: 'Nero Elegante Slabs', productCode: 'PTL-002' },
+      wall:     { color: '#FAFAFA', name: 'Carrara Pure White', productCode: 'CTL-001' },
+      accent:   { color: '#3A3C3E', name: 'Graphite Blade 3D', productCode: 'PTL-002' },
+      vanity:   { color: '#1A1A1A', name: 'Jet Black Monolith', productCode: 'SAN-002' },
+      fixtures: { color: '#D0D8DE', name: 'Polished Chrome', productCode: 'FAU-001' }
+    }
+  },
+  {
+    id: 'luxury-italian',
+    name: 'Luxury Italian',
+    rule: 'warm-cool',
+    desc: 'Precious golden Calacatta marble veining balanced with deep bronze and warm oak.',
+    colors: {
+      floor:    { color: '#E8E2D5', name: 'Marvel Calacatta Gold', productCode: 'PTL-003' },
+      wall:     { color: '#FDFBF7', name: 'Statuario Extra Silk', productCode: 'CTL-001' },
+      accent:   { color: '#D8C9A8', name: 'Onyx Amber Wave', productCode: 'PTL-003' },
+      vanity:   { color: '#563B26', name: 'Italian Walnut', productCode: 'SAN-002' },
+      fixtures: { color: '#C4A882', name: 'Champagne Brass', productCode: 'FAU-001' }
+    }
+  },
+  {
+    id: 'mediterranean',
+    name: 'Mediterranean Haven',
+    rule: 'complementary',
+    desc: 'Sun-bleached sandstone walls, subtle coastal Aegean blue, and brushed nickel hardware.',
+    colors: {
+      floor:    { color: '#E0D6C3', name: 'Pietra di Savoia', productCode: 'PTL-001' },
+      wall:     { color: '#F9F7F2', name: 'Warm Chalk White', productCode: 'CTL-001' },
+      accent:   { color: '#5C7484', name: 'Aegean Muted Blue', productCode: 'CTL-003' },
+      vanity:   { color: '#9C7A5B', name: 'Sunlit Oak', productCode: 'SAN-002' },
+      fixtures: { color: '#A8A6A1', name: 'Brushed Nickel', productCode: 'FAU-001' }
+    }
+  }
+];
+
+// Curated Swatches by Surface
+const surfaceSwatches = {
+  floor: [
+    { color: '#C5BEB3', name: 'Limestone Beige', productCode: 'PTL-001' },
+    { color: '#E0D8CB', name: 'Ivory Travertine', productCode: 'PTL-001' },
+    { color: '#8C8E91', name: 'Ash Concrete', productCode: 'PTL-002' },
+    { color: '#3A3C3E', name: 'Anthracite Cemento', productCode: 'PTL-002' },
+    { color: '#A06B52', name: 'Rustic Terracotta', productCode: 'OUT-001' },
+    { color: '#E5DED1', name: 'Luna Bianca Marble', productCode: 'PTL-003' },
+    { color: '#252526', name: 'Nero Basalt', productCode: 'PTL-002' },
+    { color: '#B6A695', name: 'Pietra Taupe', productCode: 'PTL-001' }
+  ],
+  wall: [
+    { color: '#E8E5DF', name: 'Chalk White', productCode: 'CTL-001' },
+    { color: '#FAF9F6', name: 'Bianco Calacatta Silk', productCode: 'CTL-001' },
+    { color: '#DEDBD2', name: 'Mist Greige', productCode: 'CTL-002' },
+    { color: '#F4ECE1', name: 'Cream Alabaster', productCode: 'CTL-003' },
+    { color: '#BFC5C9', name: 'Pale Concrete', productCode: 'PTL-002' },
+    { color: '#E3DDD3', name: 'Warm Travertine', productCode: 'CTL-003' },
+    { color: '#F5F5F3', name: 'Pure White Porcelain', productCode: 'CTL-001' },
+    { color: '#8A8F93', name: 'Grigio Industrial', productCode: 'CTL-002' }
+  ],
+  accent: [
+    { color: '#D3CBC0', name: 'Greige Fluted', productCode: 'CTL-003' },
+    { color: '#7E9181', name: 'Sage Green Ceramic', productCode: 'CTL-003' },
+    { color: '#A05C42', name: 'Burnt Terracotta', productCode: 'OUT-001' },
+    { color: '#445866', name: 'Deep Sea Slate', productCode: 'PTL-002' },
+    { color: '#D5C4A1', name: 'Onyx Gold Vein', productCode: 'PTL-003' },
+    { color: '#292B2D', name: '3D Blade Nero', productCode: 'PTL-002' },
+    { color: '#9E8B79', name: 'Raw Taupe Relief', productCode: 'CTL-003' },
+    { color: '#E6E1D8', name: 'White 3D Plaster', productCode: 'CTL-001' }
+  ],
+  vanity: [
+    { color: '#7D6551', name: 'Natural Walnut', productCode: 'SAN-002' },
+    { color: '#A28468', name: 'Honey Warm Oak', productCode: 'SAN-002' },
+    { color: '#2C2A29', name: 'Matte Ebony Wood', productCode: 'SAN-002' },
+    { color: '#C8B29B', name: 'Nordic Bleached Ash', productCode: 'SAN-002' },
+    { color: '#4D4238', name: 'Smoked Oak', productCode: 'SAN-002' },
+    { color: '#F2EFEB', name: 'Pure White Monolith', productCode: 'SAN-002' },
+    { color: '#3A4B56', name: 'Navy Lacquer', productCode: 'SAN-002' },
+    { color: '#8C6F48', name: 'Caramel Teak', productCode: 'SAN-002' }
+  ],
+  fixtures: [
+    { color: '#C4A882', name: 'Brushed Brass (Gold)', productCode: 'FAU-001' },
+    { color: '#1E1E1E', name: 'Matte Nero Black', productCode: 'FAU-002' },
+    { color: '#D0D8DE', name: 'Mirror Polished Chrome', productCode: 'FAU-001' },
+    { color: '#A8A6A1', name: 'Brushed Nickel', productCode: 'FAU-001' },
+    { color: '#B76E79', name: 'Rose Gold Metallic', productCode: 'FAU-001' },
+    { color: '#7A5C3C', name: 'Burnished Antique Bronze', productCode: 'FAU-002' }
+  ]
+};
+
+const harmonyRuleDescriptions = {
+  'monochromatic': 'Refined shades and gradient nuances within a single architectural color family. Calming, spacious, and effortlessly elegant.',
+  'analogous': 'Harmonious neighboring colors on the natural color wheel (e.g. sand, honey wood, and terracotta). Organic, welcoming, and balanced.',
+  'complementary': 'Artful architectural contrast using opposed chromatic notes (e.g. cool slate with warm sand). Dynamic yet visually sophisticated.',
+  'neutral-accent': 'A tranquil shell of chalk and soft travertine punctuated by an expressive focal wall or jewel tone vanity. Modern architectural standard.',
+  'warm-cool': 'Deliberate juxtaposition of cool stone/concrete slabs with tactile warm oak and brushed brass. Tactile, balanced, and layered.'
+};
+
+let studioInitialized = false;
+
+function initColorStudioPage() {
+  if (studioInitialized) {
+    updateStudioPreview();
+    updateStudioControls();
+    return;
+  }
+  studioInitialized = true;
+
+  // Render Preset Palettes Grid
+  renderPresetPalettes();
+
+  // Bind Surface Tab Navigation
+  qsa('.surface-tab').forEach(tab => {
+    tab.onclick = () => {
+      qsa('.surface-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      StudioState.activeSurface = tab.dataset.surfaceTab;
+      updateActiveSurfaceControls();
+      highlightActiveSurfaceInRoom(StudioState.activeSurface);
+    };
+  });
+
+  // Bind Floating Tag Pills on Canvas
+  qsa('.surface-tag-pill').forEach(pill => {
+    pill.onclick = () => {
+      const surfaceKey = pill.dataset.surfaceBtn;
+      const targetTab = qs(`[data-surface-tab="${surfaceKey}"]`);
+      if (targetTab) targetTab.click();
+    };
+  });
+
+  // Bind Direct Click on SVG Surface Groups
+  qsa('.room-surface-group').forEach(grp => {
+    grp.onclick = () => {
+      const surfaceKey = grp.dataset.surfaceKey;
+      const targetTab = qs(`[data-surface-tab="${surfaceKey}"]`);
+      if (targetTab) targetTab.click();
+    };
+    grp.onmouseenter = () => {
+      const surfaceKey = grp.dataset.surfaceKey;
+      const hint = qs('#studio-hover-hint');
+      if (hint) hint.textContent = `Click to customize: ${surfaceKey.toUpperCase()}`;
+    };
+    grp.onmouseleave = () => {
+      const hint = qs('#studio-hover-hint');
+      if (hint) hint.textContent = 'Click any surface in the room or select a palette below';
+    };
+  });
+
+  // Bind Harmony Rule Tabs
+  qsa('.harmony-tab').forEach(tab => {
+    tab.onclick = () => {
+      qsa('.harmony-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      StudioState.activeRule = tab.dataset.rule;
+      qs('#studio-rule-indicator').textContent = tab.textContent;
+      qs('#studio-active-harmony-name').textContent = tab.textContent + ' Harmony';
+      qs('#harmony-desc-text').textContent = harmonyRuleDescriptions[StudioState.activeRule] || '';
+    };
+  });
+
+  // Bind Custom Color Picker Input
+  const colorInput = qs('#studio-custom-color-input');
+  if (colorInput) {
+    colorInput.oninput = (e) => {
+      const hex = e.target.value.toUpperCase();
+      const current = StudioState.current[StudioState.activeSurface];
+      current.color = hex;
+      current.name = `Custom (${hex})`;
+      updateStudioPreview();
+      updatePaletteRibbon();
+      qs('#active-shade-dot').style.background = hex;
+      qs('#active-shade-name').textContent = current.name;
+      qs('#active-shade-hex').textContent = hex;
+    };
+  }
+
+  // Bind Reset Room Button
+  const resetBtn = qs('#studio-reset-btn');
+  if (resetBtn) {
+    resetBtn.onclick = () => {
+      StudioState.current = JSON.parse(JSON.stringify(StudioState.baseline));
+      StudioState.isComparing = false;
+      const compText = qs('#studio-compare-text');
+      if (compText) compText.textContent = 'Before / After';
+      updateStudioPreview();
+      updateActiveSurfaceControls();
+      updatePaletteRibbon();
+      showToast('Room restored to default showroom combination');
+    };
+  }
+
+  // Bind Generate Palette Button
+  const randomBtn = qs('#studio-random-btn');
+  if (randomBtn) {
+    randomBtn.onclick = () => {
+      generateIntelligentPalette(StudioState.activeRule);
+    };
+  }
+
+  // Bind Before / After Toggle
+  const compareBtn = qs('#studio-compare-btn');
+  if (compareBtn) {
+    compareBtn.onclick = () => {
+      StudioState.isComparing = !StudioState.isComparing;
+      const compText = qs('#studio-compare-text');
+      if (StudioState.isComparing) {
+        if (compText) compText.textContent = 'Viewing Baseline ⟲';
+        applyRoomColors(StudioState.baseline);
+        showToast('Viewing baseline showroom setting (Click again to return)');
+      } else {
+        if (compText) compText.textContent = 'Before / After';
+        applyRoomColors(StudioState.current);
+        showToast('Returned to custom design');
+      }
+    };
+  }
+
+  // Bind "+ Add Single Tile to Spec Sheet"
+  const addSingleBtn = qs('#btn-add-single-spec');
+  if (addSingleBtn) {
+    addSingleBtn.onclick = async () => {
+      const current = StudioState.current[StudioState.activeSurface];
+      await addProductToSpecByCode(current.productCode);
+    };
+  }
+
+  // Bind "+ Add All to Spec Sheet" from ribbon
+  const addAllBtn = qs('#btn-add-combination-spec');
+  if (addAllBtn) {
+    addAllBtn.onclick = async () => {
+      const codes = [...new Set(Object.values(StudioState.current).map(s => s.productCode))];
+      let added = 0;
+      for (const code of codes) {
+        const ok = await addProductToSpecByCode(code, false);
+        if (ok) added++;
+      }
+      showToast(`Added ${added} coordinated catalog products to Spec Sheet!`);
+    };
+  }
+
+  // Initial draw
+  updateStudioPreview();
+  updateActiveSurfaceControls();
+  updatePaletteRibbon();
+}
+
+function renderPresetPalettes() {
+  const container = qs('#preset-palettes-grid');
+  if (!container) return;
+  container.innerHTML = '';
+
+  studioPalettes.forEach(p => {
+    const chip = el('div', { class: 'preset-palette-chip' });
+    const swatchesHtml = Object.values(p.colors).map(c => `
+      <span style="background:${c.color}" title="${c.name}"></span>
+    `).join('');
+
+    chip.innerHTML = `
+      <div class="preset-chip-title">${p.name}</div>
+      <div class="preset-chip-swatches">${swatchesHtml}</div>
+    `;
+
+    chip.onclick = () => {
+      StudioState.current = JSON.parse(JSON.stringify(p.colors));
+      StudioState.activeRule = p.rule;
+
+      // Update rule tab
+      qsa('.harmony-tab').forEach(t => t.classList.toggle('active', t.dataset.rule === p.rule));
+      qs('#studio-rule-indicator').textContent = qs(`[data-rule="${p.rule}"]`)?.textContent || p.rule;
+      qs('#studio-active-harmony-name').textContent = p.name + ' Palette';
+      qs('#harmony-desc-text').textContent = p.desc;
+
+      updateStudioPreview();
+      updateActiveSurfaceControls();
+      updatePaletteRibbon();
+      showToast(`Applied ${p.name} palette`);
+    };
+
+    container.appendChild(chip);
+  });
+}
+
+function updateActiveSurfaceControls() {
+  const surfaceKey = StudioState.activeSurface;
+  const current = StudioState.current[surfaceKey];
+
+  // Update Surface Label
+  const surfaceNames = {
+    floor: 'Floor Tiles',
+    wall: 'Main Wall Slabs',
+    accent: 'Accent / Feature Wall',
+    vanity: 'Vanity Cabinet',
+    fixtures: 'Fixtures & Fittings'
+  };
+  qs('#active-surface-name').textContent = surfaceNames[surfaceKey] || surfaceKey;
+
+  // Update Active Shade Display
+  qs('#active-shade-dot').style.background = current.color;
+  qs('#active-shade-name').textContent = current.name;
+  qs('#active-shade-hex').textContent = current.color;
+  qs('#studio-custom-color-input').value = current.color.startsWith('#') && current.color.length === 7 ? current.color : '#C5BEB3';
+
+  // Render Curated Swatches
+  const swatchesContainer = qs('#curated-swatches-grid');
+  swatchesContainer.innerHTML = '';
+  const swatches = surfaceSwatches[surfaceKey] || [];
+
+  swatches.forEach(s => {
+    const btn = el('button', {
+      class: `curated-swatch-btn ${s.color.toUpperCase() === current.color.toUpperCase() ? 'active' : ''}`
+    });
+    btn.innerHTML = `
+      <span class="curated-swatch-circle" style="background:${s.color}"></span>
+      <span class="curated-swatch-label">${s.name}</span>
+    `;
+
+    btn.onclick = () => {
+      current.color = s.color;
+      current.name = s.name;
+      current.productCode = s.productCode;
+      updateStudioPreview();
+      updateActiveSurfaceControls();
+      updatePaletteRibbon();
+    };
+
+    swatchesContainer.appendChild(btn);
+  });
+
+  // Update Catalog Match Box
+  updateCatalogMatchBox(current.productCode);
+}
+
+async function updateCatalogMatchBox(productCode) {
+  try {
+    let prods = App.products;
+    if (!prods || !prods.length) prods = await api.get('/products');
+    const matched = prods.find(p => p.code === productCode) || prods[0];
+
+    if (matched) {
+      qs('#match-product-name').textContent = matched.name;
+      qs('#match-product-code').textContent = `Code: ${matched.code} · ${matched.size || 'Standard'} · ${matched.finish || 'Polished'}`;
+      qs('#match-product-price').textContent = fmt.price(matched.price, matched.price_currency) + ' / ' + matched.unit;
+    }
+  } catch(e) {}
+}
+
+async function addProductToSpecByCode(code, notify = true) {
+  try {
+    let prods = App.products;
+    if (!prods || !prods.length) prods = await api.get('/products');
+    const matched = prods.find(p => p.code === code);
+    if (matched) {
+      addToCart(matched);
+      if (notify) showToast(`Added ${matched.name} (${matched.code}) to Spec Sheet`);
+      return true;
+    }
+  } catch(e) {}
+  return false;
+}
+
+function highlightActiveSurfaceInRoom(surfaceKey) {
+  qsa('.room-surface-group').forEach(grp => {
+    grp.classList.toggle('active-target', grp.dataset.surfaceKey === surfaceKey);
+  });
+  qsa('.surface-tag-pill').forEach(pill => {
+    pill.classList.toggle('active', pill.dataset.surfaceBtn === surfaceKey);
+  });
+}
+
+function updateStudioPreview() {
+  applyRoomColors(StudioState.current);
+  highlightActiveSurfaceInRoom(StudioState.activeSurface);
+}
+
+function applyRoomColors(stateObj) {
+  // 1. Floor
+  const floorEl = qs('#floor-base-rect');
+  if (floorEl) floorEl.setAttribute('fill', stateObj.floor.color);
+
+  // 2. Wall
+  const wallEl = qs('#wall-base-rect');
+  if (wallEl) wallEl.setAttribute('fill', stateObj.wall.color);
+
+  // 3. Accent Wall
+  const accentEl = qs('#accent-base-rect');
+  if (accentEl) accentEl.setAttribute('fill', stateObj.accent.color);
+
+  // 4. Vanity
+  const vanityEl = qs('#vanity-base-rect');
+  if (vanityEl) vanityEl.setAttribute('fill', stateObj.vanity.color);
+
+  // 5. Fixtures
+  const fixColor = stateObj.fixtures.color;
+  ['#fixture-base', '#fixture-spout', '#fixture-tip', '#fixture-towel-bar'].forEach(sel => {
+    const el = qs(sel);
+    if (!el) return;
+    if (el.tagName.toLowerCase() === 'path' || el.tagName.toLowerCase() === 'line') {
+      el.setAttribute('stroke', fixColor);
+    } else {
+      el.setAttribute('fill', fixColor);
+    }
+  });
+
+  const mirrorFrame = qs('#mirror-frame');
+  if (mirrorFrame) mirrorFrame.setAttribute('stroke', fixColor);
+}
+
+function updatePaletteRibbon() {
+  const container = qs('#studio-ribbon-swatches');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const labels = { floor: 'Floor', wall: 'Wall', accent: 'Accent', vanity: 'Vanity', fixtures: 'Fittings' };
+
+  Object.entries(StudioState.current).forEach(([k, s]) => {
+    const item = el('div', { class: 'ribbon-swatch-item', title: `${labels[k]}: ${s.name} (${s.color})` });
+    item.innerHTML = `
+      <span class="ribbon-swatch-circle" style="background:${s.color}"></span>
+      <strong>${labels[k]}:</strong>
+      <span>${s.name.split('(')[0].trim()}</span>
+    `;
+    item.onclick = () => {
+      const tab = qs(`[data-surface-tab="${k}"]`);
+      if (tab) tab.click();
+    };
+    container.appendChild(item);
+  });
+}
+
+function generateIntelligentPalette(rule = 'monochromatic') {
+  // Pre-curated high architectural combinations by harmony rule
+  const generators = {
+    'monochromatic': [
+      {
+        name: 'Monochromatic Chalk & Charcoal',
+        floor: { color: '#888B8D', name: 'Muted Slate', productCode: 'PTL-002' },
+        wall: { color: '#F3F4F6', name: 'Pure Chalk Silk', productCode: 'CTL-001' },
+        accent: { color: '#4B4F52', name: 'Deep Graphite', productCode: 'PTL-002' },
+        vanity: { color: '#2B2D2F', name: 'Anthracite Oak', productCode: 'SAN-002' },
+        fixtures: { color: '#D0D8DE', name: 'Mirror Chrome', productCode: 'FAU-001' }
+      },
+      {
+        name: 'Monochromatic Travertine Warmth',
+        floor: { color: '#D2C8BC', name: 'Limestone Sand', productCode: 'PTL-001' },
+        wall: { color: '#FAF7F2', name: 'Alabaster Silk', productCode: 'CTL-001' },
+        accent: { color: '#BAAC9B', name: 'Warm Taupe Slab', productCode: 'CTL-003' },
+        vanity: { color: '#8C745C', name: 'Golden Teak', productCode: 'SAN-002' },
+        fixtures: { color: '#C4A882', name: 'Brushed Brass', productCode: 'FAU-001' }
+      }
+    ],
+    'analogous': [
+      {
+        name: 'Analogous Tuscan Earth',
+        floor: { color: '#9E6D53', name: 'Tuscan Terracotta', productCode: 'OUT-001' },
+        wall: { color: '#FAF2E6', name: 'Sandstone Cream', productCode: 'CTL-003' },
+        accent: { color: '#B37D56', name: 'Raw Amber Clay', productCode: 'CTL-003' },
+        vanity: { color: '#684F3B', name: 'Smoked Walnut', productCode: 'SAN-002' },
+        fixtures: { color: '#C4A882', name: 'Brushed Brass', productCode: 'FAU-001' }
+      },
+      {
+        name: 'Analogous Coastal Breeze',
+        floor: { color: '#D0D5D9', name: 'Mist Stone', productCode: 'PTL-001' },
+        wall: { color: '#F4F7F9', name: 'Sea Salt White', productCode: 'CTL-001' },
+        accent: { color: '#5C7484', name: 'Aegean Muted Blue', productCode: 'CTL-003' },
+        vanity: { color: '#3A4B56', name: 'Navy Lacquer', productCode: 'SAN-002' },
+        fixtures: { color: '#D0D8DE', name: 'Chrome Polished', productCode: 'FAU-001' }
+      }
+    ],
+    'complementary': [
+      {
+        name: 'Complementary Terracotta & Slate',
+        floor: { color: '#3B3E42', name: 'Charcoal Basalt', productCode: 'PTL-002' },
+        wall: { color: '#F8F6F2', name: 'Warm Carrara', productCode: 'CTL-001' },
+        accent: { color: '#A05C42', name: 'Burnt Terracotta', productCode: 'OUT-001' },
+        vanity: { color: '#2B2A28', name: 'Matte Nero Ebony', productCode: 'SAN-002' },
+        fixtures: { color: '#C4A882', name: 'Champagne Brass', productCode: 'FAU-001' }
+      },
+      {
+        name: 'Complementary Marble & Muted Azure',
+        floor: { color: '#E4DFD5', name: 'Luna Bianca', productCode: 'PTL-003' },
+        wall: { color: '#FAF9F6', name: 'Statuario White', productCode: 'CTL-001' },
+        accent: { color: '#445866', name: 'Deep Sea Slate', productCode: 'PTL-002' },
+        vanity: { color: '#9C7A5B', name: 'Honey Oak', productCode: 'SAN-002' },
+        fixtures: { color: '#1E1E1E', name: 'Matte Black', productCode: 'FAU-002' }
+      }
+    ],
+    'neutral-accent': [
+      {
+        name: 'Neutral Base + Botanical Sage',
+        floor: { color: '#D5CEC2', name: 'Alpine Limestone', productCode: 'PTL-001' },
+        wall: { color: '#FAF8F4', name: 'Porcelain Cream', productCode: 'CTL-001' },
+        accent: { color: '#7E9181', name: 'Botanical Sage', productCode: 'CTL-003' },
+        vanity: { color: '#A08061', name: 'Nordic Oak Plank', productCode: 'SAN-002' },
+        fixtures: { color: '#C4A882', name: 'Brushed Brass', productCode: 'FAU-001' }
+      },
+      {
+        name: 'Neutral Base + Onyx Gold',
+        floor: { color: '#E8E2D5', name: 'Calacatta Gold Floor', productCode: 'PTL-003' },
+        wall: { color: '#F7F6F2', name: 'Bianco Silk Wall', productCode: 'CTL-001' },
+        accent: { color: '#D5C4A1', name: 'Onyx Gold Vein', productCode: 'PTL-003' },
+        vanity: { color: '#7D6551', name: 'Natural Walnut', productCode: 'SAN-002' },
+        fixtures: { color: '#C4A882', name: 'Brushed Brass', productCode: 'FAU-001' }
+      }
+    ],
+    'warm-cool': [
+      {
+        name: 'Warm Oak + Cool Concrete',
+        floor: { color: '#54585B', name: 'Industrial Slate', productCode: 'PTL-002' },
+        wall: { color: '#ECEAE4', name: 'Raw Lime Plaster', productCode: 'CTL-001' },
+        accent: { color: '#8C8E91', name: 'Concrete Grey Slabs', productCode: 'PTL-002' },
+        vanity: { color: '#A28468', name: 'Warm Honey Oak', productCode: 'SAN-002' },
+        fixtures: { color: '#C4A882', name: 'Brushed Brass', productCode: 'FAU-001' }
+      },
+      {
+        name: 'Cool Calacatta + Warm Walnut',
+        floor: { color: '#E5DED1', name: 'Luna Bianca Marble', productCode: 'PTL-003' },
+        wall: { color: '#FAF9F6', name: 'Carrara Pure White', productCode: 'CTL-001' },
+        accent: { color: '#3A3C3E', name: 'Nero Fluted 3D', productCode: 'PTL-002' },
+        vanity: { color: '#563B26', name: 'Italian Walnut', productCode: 'SAN-002' },
+        fixtures: { color: '#1E1E1E', name: 'Matte Nero Black', productCode: 'FAU-002' }
+      }
+    ]
+  };
+
+  const pool = generators[rule] || generators['monochromatic'];
+  // Pick next or random option
+  const selected = pool[Math.floor(Math.random() * pool.length)];
+
+  StudioState.current = {
+    floor: selected.floor,
+    wall: selected.wall,
+    accent: selected.accent,
+    vanity: selected.vanity,
+    fixtures: selected.fixtures
+  };
+
+  qs('#studio-active-harmony-name').textContent = selected.name;
+  updateStudioPreview();
+  updateActiveSurfaceControls();
+  updatePaletteRibbon();
+  showToast(`Generated: ${selected.name}`);
+}
 
 // ============================================================
 // INITIALIZE

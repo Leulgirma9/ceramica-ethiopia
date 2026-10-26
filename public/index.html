@@ -22,11 +22,16 @@
       <a href="/" class="nav-link active" id="nav-home">Home</a>
       <a href="/catalog" class="nav-link" id="nav-catalog">Products</a>
       <a href="/categories" class="nav-link" id="nav-categories">Categories</a>
+      <a href="/color-studio" class="nav-link nav-studio-link" id="nav-color-studio"><span class="studio-sparkle">✦</span> Color Studio</a>
       <a href="/projects" class="nav-link" id="nav-projects">Projects</a>
       <a href="/about" class="nav-link" id="nav-about">About</a>
       <a href="/contact" class="nav-link" id="nav-contact">Contact</a>
     </nav>
     <div class="header-actions">
+      <a href="/api/catalog/download-pdf" class="btn-download-catalog" id="nav-download-catalog-btn" title="Download Full Catalog PDF">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <span>Catalog PDF</span>
+      </a>
       <button class="search-toggle" id="search-toggle-btn" aria-label="Search">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
       </button>
@@ -53,9 +58,11 @@
     <a href="/" class="mob-nav-link" id="mob-nav-home">Home</a>
     <a href="/catalog" class="mob-nav-link" id="mob-nav-catalog">Products</a>
     <a href="/categories" class="mob-nav-link" id="mob-nav-categories">Categories</a>
+    <a href="/color-studio" class="mob-nav-link" id="mob-nav-color-studio">🎨 Color Studio</a>
     <a href="/projects" class="mob-nav-link" id="mob-nav-projects">Projects</a>
     <a href="/about" class="mob-nav-link" id="mob-nav-about">About</a>
     <a href="/contact" class="mob-nav-link" id="mob-nav-contact">Contact</a>
+    <a href="/api/catalog/download-pdf" class="mob-nav-link mob-catalog-dl" id="mob-nav-catalog-dl">📥 Download Full Catalog (PDF)</a>
     <a href="/admin" class="mob-nav-link" id="mob-nav-admin">Admin</a>
   </div>
 </header>
@@ -77,7 +84,8 @@
         <p class="hero-subtitle" id="hero-subtitle-el">Premium ceramics and porcelain for exceptional interiors.<br>Discover our curated collection.</p>
         <div class="hero-actions">
           <a href="/catalog" class="btn-primary hero-cta" id="hero-cta-btn">Explore Products</a>
-          <a href="/projects" class="btn-ghost hero-cta-secondary" id="hero-projects-btn">View Projects</a>
+          <a href="/color-studio" class="btn-studio-cta hero-cta-studio" id="hero-studio-btn">✦ Try Colors</a>
+          <a href="/api/catalog/download-pdf" class="btn-ghost hero-cta-dl" id="hero-catalog-pdf-btn">📥 Full Catalog PDF</a>
         </div>
       </div>
       <div class="hero-scroll-indicator" id="hero-scroll">
@@ -152,6 +160,45 @@
         <!-- Collections Editorial Grid -->
         <div class="collections-editorial-grid" id="collections-grid">
           <!-- Rendered dynamically by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ COLOR STUDIO INTERACTIVE TEASER ============ -->
+    <section class="section studio-teaser-section" id="home-studio-teaser">
+      <div class="container">
+        <div class="studio-teaser-card" data-reveal>
+          <div class="studio-teaser-text">
+            <div class="header-pre-title">
+              <span class="section-label">Interactive Surface Lab</span>
+              <span class="heritage-badge">Visual Demonstration</span>
+            </div>
+            <h2 class="studio-teaser-title">Explore Color Combinations with Color Studio</h2>
+            <p class="studio-teaser-desc">
+              Experiment with coordinated architectural palettes across floor tiles, wall slabs, vanity finishes, and metallic fittings in real-time. Test monochromatic, complementary, and luxury contrast combinations before specifying for your project.
+            </p>
+            <div class="studio-teaser-pills">
+              <span>✦ Coordinated Harmony Rules</span>
+              <span>✦ Real Catalog Tile Mapping</span>
+              <span>✦ Instant Spec Sheet Integration</span>
+            </div>
+            <div class="studio-teaser-actions">
+              <a href="/color-studio" class="btn-primary" id="home-studio-cta">🎨 Try Color Studio →</a>
+              <a href="/api/catalog/download-pdf" class="btn-secondary" id="home-dl-catalog-cta">📥 Download Full Catalog (PDF)</a>
+            </div>
+          </div>
+          <div class="studio-teaser-visual">
+            <div class="studio-teaser-preview-mini">
+              <img src="/uploads/project-bathroom.jpg" alt="Color Studio Visualizer" class="studio-teaser-img" />
+              <div class="studio-palette-mini-bar">
+                <span class="mini-swatch" style="background:#F7F6F2" title="Bianco Wall"></span>
+                <span class="mini-swatch" style="background:#CFC9BE" title="Greige Accent"></span>
+                <span class="mini-swatch" style="background:#7D6551" title="Walnut Vanity"></span>
+                <span class="mini-swatch" style="background:#2B2A28" title="Basalt Floor"></span>
+                <span class="mini-swatch" style="background:#C4A882" title="Brushed Brass"></span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -352,9 +399,18 @@
   <!-- ===== CATALOG PAGE ===== -->
   <section class="page" id="page-catalog">
     <div class="page-hero-bar">
-      <div class="container">
-        <h1 class="page-title">Product Catalog</h1>
-        <p class="page-subtitle">Browse our complete collection of tiles, sanitary ware, and bathroom solutions</p>
+      <div class="container catalog-hero-flex">
+        <div>
+          <h1 class="page-title">Product Catalog</h1>
+          <p class="page-subtitle">Browse our complete collection of tiles, sanitary ware, and bathroom solutions</p>
+        </div>
+        <div class="catalog-hero-actions">
+          <a href="/color-studio" class="btn-secondary" id="catalog-hero-studio-btn">🎨 Try Color Studio</a>
+          <a href="/api/catalog/download-pdf" class="btn-primary" id="catalog-hero-dl-btn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download Full Catalog (PDF)
+          </a>
+        </div>
       </div>
     </div>
     <div class="container catalog-layout">
@@ -386,7 +442,9 @@
           <button class="btn-filter-apply" id="apply-price-filter">Apply</button>
         </div>
         <div class="filter-group">
-          <a href="/price-list" class="btn-secondary full-w" id="price-list-link">📄 Price List</a>
+          <a href="/api/catalog/download-pdf" class="btn-primary full-w" id="sidebar-download-pdf-btn">📥 Download Full Catalog (PDF)</a>
+          <a href="/color-studio" class="btn-secondary full-w" style="margin-top:8px" id="sidebar-color-studio-btn">🎨 Try Color Studio</a>
+          <a href="/price-list" class="btn-secondary full-w" style="margin-top:8px" id="price-list-link">📄 Printable Price List</a>
         </div>
       </aside>
       <!-- Products -->
@@ -545,6 +603,277 @@
     </div>
   </section>
 
+  <!-- ===== COLOR STUDIO PAGE (INTERACTIVE SURFACE LAB) ===== -->
+  <section class="page" id="page-color-studio">
+    <div class="page-hero-bar studio-hero-bar">
+      <div class="container studio-hero-flex">
+        <div>
+          <div class="header-pre-title">
+            <span class="section-label">Interactive Surface Lab</span>
+            <span class="heritage-badge">Visual Demonstration Only</span>
+          </div>
+          <h1 class="page-title">Architectural Color Studio</h1>
+          <p class="page-subtitle">Experiment with harmonized surface palettes, wall slabs, floor tiles, vanity wood tones, and metallic fixtures in real-time.</p>
+        </div>
+        <div class="studio-top-actions">
+          <button class="btn-studio-tool" id="studio-reset-btn" title="Reset to default showroom combination">
+            <span>⟲</span> Reset Room
+          </button>
+          <button class="btn-studio-tool highlight" id="studio-random-btn" title="Generate another intelligent combination based on current harmony rule">
+            <span>✦</span> Generate Palette
+          </button>
+          <button class="btn-studio-tool" id="studio-compare-btn" title="Compare custom combination with baseline">
+            <span>👁️</span> <span id="studio-compare-text">Before / After</span>
+          </button>
+          <a href="/api/catalog/download-pdf" class="btn-primary" id="studio-dl-catalog-btn" title="Download Complete Specification Catalog PDF">
+            <span>📥</span> Download Full Catalog
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="container studio-workspace">
+      <!-- Left: Interactive Room Preview Canvas -->
+      <div class="studio-canvas-col">
+        <div class="studio-preview-card" id="studio-preview-card">
+          <div class="studio-canvas-header">
+            <div class="studio-canvas-status">
+              <span class="studio-live-dot"></span>
+              <span id="studio-active-harmony-name">Monochromatic Harmony</span>
+            </div>
+            <div class="studio-canvas-surface-hint" id="studio-hover-hint">Click any surface below or select a palette to customize</div>
+          </div>
+
+          <!-- Dynamic SVG Room Visualizer -->
+          <div class="studio-room-viewport" id="studio-room-viewport">
+            <svg id="studio-room-svg" viewBox="0 0 1000 680" preserveAspectRatio="xMidYMid meet">
+              <defs>
+                <!-- Floor Tile Grid Pattern -->
+                <pattern id="floor-tile-pattern" width="120" height="70" patternUnits="userSpaceOnUse" patternTransform="rotate(-8)">
+                  <rect width="120" height="70" fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="1.2" />
+                </pattern>
+                <!-- Wall Slab Grid Pattern -->
+                <pattern id="wall-slab-pattern" width="220" height="260" patternUnits="userSpaceOnUse">
+                  <rect width="220" height="260" fill="none" stroke="rgba(0,0,0,0.12)" stroke-width="0.8" />
+                </pattern>
+                <!-- Accent Fluting Pattern -->
+                <pattern id="accent-flute-pattern" width="14" height="200" patternUnits="userSpaceOnUse">
+                  <line x1="0" y1="0" x2="0" y2="200" stroke="rgba(0,0,0,0.15)" stroke-width="1.5" />
+                  <line x1="2" y1="0" x2="2" y2="200" stroke="rgba(255,255,255,0.2)" stroke-width="1" />
+                </pattern>
+                <!-- Lighting & Shadow Gradients -->
+                <linearGradient id="wall-ambient-grad" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stop-color="#ffffff" stop-opacity="0.25" />
+                  <stop offset="40%" stop-color="#ffffff" stop-opacity="0.05" />
+                  <stop offset="100%" stop-color="#000000" stop-opacity="0.18" />
+                </linearGradient>
+                <linearGradient id="floor-depth-grad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#000000" stop-opacity="0.28" />
+                  <stop offset="35%" stop-color="#000000" stop-opacity="0.08" />
+                  <stop offset="100%" stop-color="#ffffff" stop-opacity="0.12" />
+                </linearGradient>
+                <linearGradient id="accent-depth-grad" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stop-color="#000000" stop-opacity="0.25" />
+                  <stop offset="100%" stop-color="#000000" stop-opacity="0.05" />
+                </linearGradient>
+                <!-- Vanity Shadow Filter -->
+                <filter id="vanity-shadow" x="-10%" y="-10%" width="130%" height="150%">
+                  <feDropShadow dx="0" dy="24" stdDeviation="16" flood-color="#000000" flood-opacity="0.35" />
+                </filter>
+                <!-- Mirror Backglow Filter -->
+                <filter id="mirror-glow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feDropShadow dx="0" dy="0" stdDeviation="18" flood-color="#fff4e0" flood-opacity="0.45" />
+                </filter>
+              </defs>
+
+              <!-- Layer 1: Main Wall (Rear & Left) -->
+              <g id="surface-main-wall" class="room-surface-group" data-surface-key="wall">
+                <polygon points="0,0 730,0 730,470 0,470" id="wall-base-rect" fill="#E8E5DF" />
+                <polygon points="0,0 730,0 730,470 0,470" fill="url(#wall-slab-pattern)" />
+                <polygon points="0,0 730,0 730,470 0,470" fill="url(#wall-ambient-grad)" style="mix-blend-mode:multiply" />
+              </g>
+
+              <!-- Layer 2: Feature / Accent Wall (Right Architectural Zone) -->
+              <g id="surface-accent-wall" class="room-surface-group" data-surface-key="accent">
+                <polygon points="730,0 1000,0 1000,470 730,470" id="accent-base-rect" fill="#D3CBC0" />
+                <polygon points="730,0 1000,0 1000,470 730,470" fill="url(#accent-flute-pattern)" opacity="0.75" />
+                <polygon points="730,0 1000,0 1000,470 730,470" fill="url(#accent-depth-grad)" style="mix-blend-mode:multiply" />
+                <!-- Corner Shadow Seam -->
+                <line x1="730" y1="0" x2="730" y2="470" stroke="#000000" stroke-opacity="0.3" stroke-width="2" />
+              </g>
+
+              <!-- Layer 3: Floor Surface with Perspective Grid -->
+              <g id="surface-floor" class="room-surface-group" data-surface-key="floor">
+                <polygon points="0,470 1000,470 1000,680 0,680" id="floor-base-rect" fill="#C5BEB3" />
+                <polygon points="0,470 1000,470 1000,680 0,680" fill="url(#floor-tile-pattern)" opacity="0.65" />
+                <polygon points="0,470 1000,470 1000,680 0,680" fill="url(#floor-depth-grad)" style="mix-blend-mode:multiply" />
+                <!-- Baseboard junction line -->
+                <line x1="0" y1="470" x2="1000" y2="470" stroke="#000000" stroke-opacity="0.3" stroke-width="2" />
+              </g>
+
+              <!-- Layer 4: Architectural Mirror & Backlight -->
+              <g id="room-mirror-assembly">
+                <path d="M 280,310 L 280,180 A 110,110 0 0,1 500,180 L 500,310 Z" fill="#FFFFFF" filter="url(#mirror-glow)" opacity="0.8" />
+                <path d="M 285,305 L 285,182 A 105,105 0 0,1 495,182 L 495,305 Z" fill="#D8DFE4" id="mirror-glass" />
+                <!-- Mirror subtle reflection -->
+                <path d="M 330,120 L 460,290" stroke="#FFFFFF" stroke-width="28" stroke-linecap="round" opacity="0.15" />
+                <path d="M 285,305 L 285,182 A 105,105 0 0,1 495,182 L 495,305 Z" fill="none" stroke="#222222" stroke-width="3" id="mirror-frame" />
+              </g>
+
+              <!-- Layer 5: Floating Vanity Cabinet -->
+              <g id="surface-vanity" class="room-surface-group" data-surface-key="vanity" filter="url(#vanity-shadow)">
+                <rect x="210" y="335" width="360" height="115" rx="3" id="vanity-base-rect" fill="#7D6551" />
+                <!-- Drawer divider line -->
+                <line x1="210" y1="392" x2="570" y2="392" stroke="rgba(0,0,0,0.3)" stroke-width="2" />
+                <!-- Subtle wood grain lines -->
+                <line x1="220" y1="360" x2="560" y2="360" stroke="rgba(255,255,255,0.12)" stroke-width="1" />
+                <line x1="220" y1="420" x2="560" y2="420" stroke="rgba(0,0,0,0.15)" stroke-width="1" />
+                <!-- Minimalist notch handles -->
+                <rect x="360" y="388" width="60" height="4" rx="2" fill="rgba(0,0,0,0.4)" />
+              </g>
+
+              <!-- Layer 6: Integrated Monolithic Porcelain Basin (Habitat) -->
+              <g id="room-basin-assembly">
+                <!-- Countertop slab -->
+                <rect x="200" y="322" width="380" height="18" rx="2" fill="#F4F2EE" stroke="#E0DDD6" stroke-width="1" />
+                <!-- Recessed basin bowl -->
+                <rect x="260" y="324" width="260" height="13" rx="2" fill="#E2DFD8" />
+                <ellipse cx="390" cy="331" rx="8" ry="4" fill="#666666" />
+              </g>
+
+              <!-- Layer 7: Metallic Fixtures (Faucet & Spout) -->
+              <g id="surface-fixtures" class="room-surface-group" data-surface-key="fixtures">
+                <!-- Gooseneck Faucet Base -->
+                <rect x="382" y="300" width="16" height="24" rx="2" id="fixture-base" fill="#C4A882" />
+                <!-- Curved Spout Pipe -->
+                <path d="M 390,300 C 390,230 350,225 350,250" fill="none" stroke="#C4A882" stroke-width="9" stroke-linecap="round" id="fixture-spout" />
+                <!-- Aerator Tip -->
+                <rect x="344" y="250" width="12" height="6" rx="1" id="fixture-tip" fill="#C4A882" />
+                <!-- Water stream (translucent) -->
+                <line x1="350" y1="256" x2="350" y2="330" stroke="#FFFFFF" stroke-width="3" opacity="0.45" />
+                <!-- Towel Bar on Accent Wall -->
+                <rect x="780" y="260" width="140" height="7" rx="2" id="fixture-towel-bar" fill="#C4A882" />
+                <rect x="800" y="267" width="90" height="80" rx="3" fill="#FFFFFF" opacity="0.85" />
+              </g>
+            </svg>
+
+            <!-- Floating Surface Interactive Indicators -->
+            <div class="surface-tag-pill tag-floor" data-surface-btn="floor">Floor Tile</div>
+            <div class="surface-tag-pill tag-wall" data-surface-btn="wall">Main Wall</div>
+            <div class="surface-tag-pill tag-accent" data-surface-btn="accent">Accent Wall</div>
+            <div class="surface-tag-pill tag-vanity" data-surface-btn="vanity">Vanity Cabinet</div>
+            <div class="surface-tag-pill tag-fixtures" data-surface-btn="fixtures">Fixtures</div>
+          </div>
+
+          <!-- Bottom Palette Summary Ribbon -->
+          <div class="studio-palette-ribbon">
+            <div class="ribbon-label">Active Combination:</div>
+            <div class="ribbon-swatches" id="studio-ribbon-swatches">
+              <!-- Rendered by JS -->
+            </div>
+            <div class="ribbon-actions">
+              <button class="btn-outline-sm" id="btn-add-combination-spec">+ Add All to Spec Sheet</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Studio Controls Panel -->
+      <div class="studio-controls-col">
+        <!-- Harmony Rules Selector -->
+        <div class="studio-card">
+          <div class="studio-card-head">
+            <h3 class="studio-head-title">Color Harmony Rule</h3>
+            <span class="studio-rule-badge" id="studio-rule-indicator">Monochromatic</span>
+          </div>
+          <div class="harmony-tabs-row" id="harmony-tabs-row">
+            <button class="harmony-tab active" data-rule="monochromatic">Monochromatic</button>
+            <button class="harmony-tab" data-rule="analogous">Analogous</button>
+            <button class="harmony-tab" data-rule="complementary">Complementary</button>
+            <button class="harmony-tab" data-rule="neutral-accent">Neutral + Accent</button>
+            <button class="harmony-tab" data-rule="warm-cool">Warm &amp; Cool</button>
+          </div>
+          <p class="harmony-desc" id="harmony-desc-text">
+            Refined shades and gradient nuances within a single architectural color family. Calming, spacious, and effortlessly elegant.
+          </p>
+        </div>
+
+        <!-- Curated Preset Palettes -->
+        <div class="studio-card">
+          <div class="studio-card-head">
+            <h3 class="studio-head-title">Architectural Palettes</h3>
+            <span style="font-size:0.75rem;color:var(--clr-text-light)">Click to apply</span>
+          </div>
+          <div class="preset-palettes-grid" id="preset-palettes-grid">
+            <!-- Rendered by JS: Warm Neutrals, Cool Neutrals, Earthy, Natural, Modern, Luxury, Mediterranean -->
+          </div>
+        </div>
+
+        <!-- Individual Surface Customization -->
+        <div class="studio-card">
+          <div class="studio-card-head">
+            <h3 class="studio-head-title">Surface Inspector</h3>
+            <span class="active-surface-name" id="active-surface-name">Floor Tiles</span>
+          </div>
+
+          <!-- Surface Tabs -->
+          <div class="surface-tabs-row" id="surface-tabs-row">
+            <button class="surface-tab active" data-surface-tab="floor">Floor</button>
+            <button class="surface-tab" data-surface-tab="wall">Walls</button>
+            <button class="surface-tab" data-surface-tab="accent">Accent</button>
+            <button class="surface-tab" data-surface-tab="vanity">Vanity</button>
+            <button class="surface-tab" data-surface-tab="fixtures">Fixtures</button>
+          </div>
+
+          <!-- Surface Color & Product Swatches -->
+          <div class="surface-controls-body">
+            <div class="current-shade-display">
+              <div class="shade-dot-lg" id="active-shade-dot" style="background:#C5BEB3"></div>
+              <div class="shade-info">
+                <span class="shade-name" id="active-shade-name">Limestone Beige</span>
+                <span class="shade-hex" id="active-shade-hex">#C5BEB3</span>
+              </div>
+              <label class="custom-color-picker-wrap" title="Choose custom HEX color">
+                <span>Custom</span>
+                <input type="color" id="studio-custom-color-input" value="#C5BEB3" />
+              </label>
+            </div>
+
+            <!-- Curated Tones for Active Surface -->
+            <div class="curated-tones-section">
+              <label class="control-sublabel">Curated Shades for this surface:</label>
+              <div class="curated-swatches-grid" id="curated-swatches-grid">
+                <!-- Rendered by JS -->
+              </div>
+            </div>
+
+            <!-- Matching Catalog Tile Product -->
+            <div class="catalog-match-box" id="catalog-match-box">
+              <div class="match-box-header">
+                <span class="match-label">Recommended Catalog Tile:</span>
+                <span class="match-price" id="match-product-price">1,250 ETB / m²</span>
+              </div>
+              <div class="match-box-body">
+                <strong id="match-product-name">Pietra Grande 80×80 cm</strong>
+                <p id="match-product-code">Code: PTL-001 · Polished Porcelain</p>
+              </div>
+              <button class="btn-outline-sm full-w" id="btn-add-single-spec" style="margin-top:8px">
+                + Add this tile to Spec Sheet
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Demonstration Notice -->
+        <div class="studio-disclaimer-box">
+          <p>
+            <strong>Note on Digital Color Simulation:</strong> This interactive studio is a visual design demonstration. On-screen colors may differ from physical materials depending on display calibration and ambient lighting. Request physical samples or download the complete catalog for precise specifications.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ===== PRICE LIST PAGE ===== -->
   <section class="page" id="page-price-list">
     <div class="page-hero-bar">
@@ -561,7 +890,10 @@
           </select>
           <input type="text" id="price-list-search" class="filter-input" placeholder="Search by name or code…" />
         </div>
-        <button onclick="window.print()" class="btn-secondary" id="print-price-list-btn">🖨️ Print Price List</button>
+        <div class="price-list-actions-row">
+          <a href="/api/catalog/download-pdf" class="btn-primary" id="price-list-download-btn">📥 Download Full Catalog PDF</a>
+          <button onclick="window.print()" class="btn-secondary" id="print-price-list-btn">🖨️ Print Price List</button>
+        </div>
       </div>
       <div class="price-list-header-row">
         <span>Product Name</span>
