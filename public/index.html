@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ceramica Ethiopia — Premium Tiles & Bathroom Solutions</title>
+  <title>Ceramica Ethiopia — Premium Tiles &amp; Bathroom Solutions</title>
   <meta name="description" content="Ethiopia's premier supplier of ceramic tiles, porcelain, sanitary ware, faucets, and complete bathroom solutions. Trusted by architects and procurement officers." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -22,12 +22,17 @@
       <a href="/" class="nav-link active" id="nav-home">Home</a>
       <a href="/catalog" class="nav-link" id="nav-catalog">Products</a>
       <a href="/categories" class="nav-link" id="nav-categories">Categories</a>
+      <a href="/projects" class="nav-link" id="nav-projects">Projects</a>
       <a href="/about" class="nav-link" id="nav-about">About</a>
       <a href="/contact" class="nav-link" id="nav-contact">Contact</a>
     </nav>
     <div class="header-actions">
       <button class="search-toggle" id="search-toggle-btn" aria-label="Search">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      </button>
+      <button class="cart-toggle" id="cart-toggle-btn" aria-label="Inquiry list">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
+        <span class="cart-badge" id="cart-badge" style="display:none">0</span>
       </button>
       <a href="/admin" class="btn-outline-sm" id="nav-admin">Admin</a>
       <button class="menu-toggle" id="menu-toggle" aria-label="Menu">
@@ -48,6 +53,7 @@
     <a href="/" class="mob-nav-link" id="mob-nav-home">Home</a>
     <a href="/catalog" class="mob-nav-link" id="mob-nav-catalog">Products</a>
     <a href="/categories" class="mob-nav-link" id="mob-nav-categories">Categories</a>
+    <a href="/projects" class="mob-nav-link" id="mob-nav-projects">Projects</a>
     <a href="/about" class="mob-nav-link" id="mob-nav-about">About</a>
     <a href="/contact" class="mob-nav-link" id="mob-nav-contact">Contact</a>
     <a href="/admin" class="mob-nav-link" id="mob-nav-admin">Admin</a>
@@ -69,14 +75,45 @@
         <p class="hero-eyebrow">Made for Ethiopia</p>
         <h1 class="hero-title" id="hero-title-el">Elevate Every Space</h1>
         <p class="hero-subtitle" id="hero-subtitle-el">Premium ceramics and porcelain for exceptional interiors.<br>Discover our curated collection.</p>
-        <a href="/catalog" class="btn-primary hero-cta" id="hero-cta-btn">Explore Products</a>
+        <div class="hero-actions">
+          <a href="/catalog" class="btn-primary hero-cta" id="hero-cta-btn">Explore Products</a>
+          <a href="/projects" class="btn-ghost hero-cta-secondary" id="hero-projects-btn">View Projects</a>
+        </div>
+      </div>
+      <div class="hero-scroll-indicator" id="hero-scroll">
+        <span class="scroll-line"></span>
+        <span class="scroll-label">Scroll</span>
+      </div>
+    </div>
+
+    <!-- Stats Bar -->
+    <div class="stats-bar" id="home-stats">
+      <div class="container">
+        <div class="stats-grid">
+          <div class="stat-item" data-reveal>
+            <div class="stat-number">2,500<span>+</span></div>
+            <div class="stat-label">Products Available</div>
+          </div>
+          <div class="stat-item" data-reveal>
+            <div class="stat-number">150<span>+</span></div>
+            <div class="stat-label">Projects Completed</div>
+          </div>
+          <div class="stat-item" data-reveal>
+            <div class="stat-number">12</div>
+            <div class="stat-label">Global Brands</div>
+          </div>
+          <div class="stat-item" data-reveal>
+            <div class="stat-number">10<span>+</span></div>
+            <div class="stat-label">Years of Excellence</div>
+          </div>
+        </div>
       </div>
     </div>
 
     <!-- Categories Strip -->
     <section class="section categories-section" id="home-categories">
       <div class="container">
-        <div class="section-header">
+        <div class="section-header" data-reveal>
           <span class="section-label">Our Collections</span>
           <h2 class="section-title">Browse by Category</h2>
         </div>
@@ -89,7 +126,7 @@
     <!-- Featured Products -->
     <section class="section featured-section bg-light" id="home-featured">
       <div class="container">
-        <div class="section-header">
+        <div class="section-header" data-reveal>
           <span class="section-label">Selection</span>
           <h2 class="section-title">Featured Products</h2>
           <a href="/catalog" class="section-link" id="home-view-all-link">View All Products →</a>
@@ -100,16 +137,64 @@
       </div>
     </section>
 
+    <!-- Projects / Inspiration Strip -->
+    <section class="section projects-teaser" id="home-projects">
+      <div class="container">
+        <div class="section-header" data-reveal>
+          <span class="section-label">Inspiration</span>
+          <h2 class="section-title">Architectural Projects</h2>
+          <a href="/projects" class="section-link" id="home-projects-link">View All Projects →</a>
+        </div>
+        <div class="projects-strip-grid" id="home-projects-grid">
+          <div class="project-strip-card" data-project="hotel" data-reveal>
+            <div class="project-strip-img-wrap">
+              <img src="/uploads/project-hotel.jpg" alt="Sheraton Addis Renovation" loading="lazy" />
+            </div>
+            <div class="project-strip-info">
+              <span class="project-strip-type">Hospitality</span>
+              <h3 class="project-strip-title">Luxury Hotel Lobby</h3>
+              <p class="project-strip-sub">Polished porcelain & stone cladding</p>
+            </div>
+          </div>
+          <div class="project-strip-card" data-project="bathroom" data-reveal>
+            <div class="project-strip-img-wrap">
+              <img src="/uploads/project-bathroom.jpg" alt="Luxury Residence" loading="lazy" />
+            </div>
+            <div class="project-strip-info">
+              <span class="project-strip-type">Residential</span>
+              <h3 class="project-strip-title">Luxury Villa Bathroom</h3>
+              <p class="project-strip-sub">Matte porcelain & premium fittings</p>
+            </div>
+          </div>
+          <div class="project-strip-card" data-project="office" data-reveal>
+            <div class="project-strip-img-wrap">
+              <img src="/uploads/project-office.jpg" alt="Commercial Tower" loading="lazy" />
+            </div>
+            <div class="project-strip-info">
+              <span class="project-strip-type">Commercial</span>
+              <h3 class="project-strip-title">Corporate Headquarters</h3>
+              <p class="project-strip-sub">Large-format ceramic cladding tiles</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Company Introduction -->
     <section class="section about-strip" id="home-about">
       <div class="container about-strip-inner">
-        <div class="about-strip-text">
+        <div class="about-strip-text" data-reveal>
           <span class="section-label">About Us</span>
           <h2 class="about-strip-title">Ethiopia's Premier Ceramics Destination</h2>
           <p class="about-strip-desc" id="home-about-desc">Trusted by architects, interior designers, and procurement officers across the nation. We supply the finest ceramic tiles, porcelain, sanitary ware, and bathroom solutions to elevate every space.</p>
+          <div class="about-strip-features">
+            <div class="about-feature"><span>✦</span> Premium Quality Products</div>
+            <div class="about-feature"><span>✦</span> Expert Technical Support</div>
+            <div class="about-feature"><span>✦</span> Government-Ready Pricing</div>
+          </div>
           <a href="/about" class="btn-secondary" id="home-about-link">Learn More</a>
         </div>
-        <div class="about-strip-img-wrap">
+        <div class="about-strip-img-wrap" data-reveal>
           <img src="/uploads/cat-ceramic.jpg" alt="Premium interiors" class="about-strip-img" />
         </div>
       </div>
@@ -169,7 +254,7 @@
           <button class="btn-filter-apply" id="apply-price-filter">Apply</button>
         </div>
         <div class="filter-group">
-          <a href="/price-list" class="btn-secondary full-w" id="price-list-link">📄 Download Price List</a>
+          <a href="/price-list" class="btn-secondary full-w" id="price-list-link">📄 Price List</a>
         </div>
       </aside>
       <!-- Products -->
@@ -212,6 +297,36 @@
   <section class="page" id="page-product">
     <div class="container product-detail-layout" id="product-detail-content">
       <!-- Filled by JS -->
+    </div>
+    <div class="section bg-light" id="related-section" style="display:none">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-label">Explore More</span>
+          <h2 class="section-title">Related Products</h2>
+        </div>
+        <div class="products-grid" id="related-products-grid"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PROJECTS PAGE ===== -->
+  <section class="page" id="page-projects">
+    <div class="page-hero-bar">
+      <div class="container">
+        <h1 class="page-title">Architectural Projects</h1>
+        <p class="page-subtitle">Inspiring spaces built with Ceramica Ethiopia products</p>
+      </div>
+    </div>
+    <div class="container">
+      <div class="projects-filter-bar" id="projects-filter-bar">
+        <button class="proj-filter-btn active" data-filter="all">All Projects</button>
+        <button class="proj-filter-btn" data-filter="hospitality">Hospitality</button>
+        <button class="proj-filter-btn" data-filter="residential">Residential</button>
+        <button class="proj-filter-btn" data-filter="commercial">Commercial</button>
+      </div>
+      <div class="projects-masonry" id="projects-grid">
+        <!-- Filled by JS -->
+      </div>
     </div>
   </section>
 
@@ -342,7 +457,7 @@
   <div class="container footer-grid">
     <div class="footer-brand">
       <span class="footer-logo" id="footer-logo-text">Ceramica Ethiopia</span>
-      <p class="footer-tagline" id="footer-tagline">Premium Ceramic & Porcelain Solutions</p>
+      <p class="footer-tagline" id="footer-tagline">Premium Ceramic &amp; Porcelain Solutions</p>
       <p class="footer-desc">Ethiopia's trusted supplier of premium tiles, sanitary ware, and bathroom solutions for residential, commercial, and government projects.</p>
     </div>
     <div class="footer-col">
@@ -350,6 +465,7 @@
       <a href="/" class="footer-link">Home</a>
       <a href="/catalog" class="footer-link">Products</a>
       <a href="/categories" class="footer-link">Categories</a>
+      <a href="/projects" class="footer-link">Projects</a>
       <a href="/price-list" class="footer-link">Price List</a>
       <a href="/about" class="footer-link">About Us</a>
       <a href="/contact" class="footer-link">Contact</a>
@@ -359,7 +475,7 @@
       <a href="/catalog?cat=ceramic-tiles" class="footer-link">Ceramic Tiles</a>
       <a href="/catalog?cat=porcelain-tiles" class="footer-link">Porcelain Tiles</a>
       <a href="/catalog?cat=sanitary-ware" class="footer-link">Sanitary Ware</a>
-      <a href="/catalog?cat=faucets-mixers" class="footer-link">Faucets & Mixers</a>
+      <a href="/catalog?cat=faucets-mixers" class="footer-link">Faucets &amp; Mixers</a>
       <a href="/catalog?cat=bathroom-appliances" class="footer-link">Bathroom Appliances</a>
       <a href="/catalog?cat=outdoor-tiles" class="footer-link">Outdoor Tiles</a>
     </div>
@@ -419,6 +535,10 @@
         <a class="admin-nav-link" data-panel="categories" id="admin-nav-categories">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
           Categories
+        </a>
+        <a class="admin-nav-link" data-panel="inquiries" id="admin-nav-inquiries">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          Inquiries
         </a>
         <a class="admin-nav-link" data-panel="settings" id="admin-nav-settings">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
@@ -485,6 +605,31 @@
             </thead>
             <tbody id="admin-categories-tbody">
               <tr><td colspan="6" class="loading-cell">Loading categories…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Inquiries Panel -->
+      <div class="admin-panel" id="panel-inquiries">
+        <div class="admin-panel-header">
+          <h2>Product Inquiries</h2>
+          <span class="admin-panel-subtitle">Customer inquiries submitted via the spec sheet system</span>
+        </div>
+        <div class="admin-table-wrap">
+          <table class="admin-table" id="admin-inquiries-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Products Requested</th>
+                <th>Message</th>
+              </tr>
+            </thead>
+            <tbody id="admin-inquiries-tbody">
+              <tr><td colspan="6" class="loading-cell">Loading inquiries…</td></tr>
             </tbody>
           </table>
         </div>
@@ -737,6 +882,69 @@
     </div>
   </div>
 </div>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" style="display:none" role="dialog" aria-modal="true">
+  <button class="lightbox-close" id="lightbox-close" aria-label="Close">✕</button>
+  <button class="lightbox-nav lightbox-prev" id="lightbox-prev" aria-label="Previous">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 18l-6-6 6-6"/></svg>
+  </button>
+  <div class="lightbox-img-wrap">
+    <img class="lightbox-img" id="lightbox-img" src="" alt="" />
+  </div>
+  <button class="lightbox-nav lightbox-next" id="lightbox-next" aria-label="Next">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 18l6-6-6-6"/></svg>
+  </button>
+  <div class="lightbox-counter" id="lightbox-counter">1 / 1</div>
+</div>
+
+<!-- Inquiry Cart Drawer -->
+<div class="cart-overlay" id="cart-overlay" style="display:none"></div>
+<div class="cart-drawer" id="cart-drawer">
+  <div class="cart-header">
+    <div>
+      <h3 class="cart-title">Spec Sheet</h3>
+      <p class="cart-subtitle">Your product inquiry list</p>
+    </div>
+    <button class="cart-close" id="cart-close-btn" aria-label="Close">✕</button>
+  </div>
+  <div class="cart-body" id="cart-body">
+    <div class="cart-empty" id="cart-empty">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>
+      <p>Your spec sheet is empty.</p>
+      <p>Browse products and click <strong>Add to Spec Sheet</strong>.</p>
+    </div>
+    <div class="cart-items" id="cart-items"></div>
+  </div>
+  <div class="cart-footer" id="cart-footer" style="display:none">
+    <div class="cart-inquiry-form">
+      <h4 class="cart-form-title">Submit Inquiry</h4>
+      <div class="form-group">
+        <label for="cart-name">Your Name *</label>
+        <input type="text" id="cart-name" placeholder="Full name" />
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="cart-phone">Phone *</label>
+          <input type="tel" id="cart-phone" placeholder="+251…" />
+        </div>
+        <div class="form-group">
+          <label for="cart-email">Email</label>
+          <input type="email" id="cart-email" placeholder="optional" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="cart-message">Project Details</label>
+        <textarea id="cart-message" rows="3" placeholder="Project type, area size, timeline…"></textarea>
+      </div>
+      <button class="btn-primary full-w" id="cart-submit-btn">Send Inquiry</button>
+      <p class="form-note" id="cart-submit-note"></p>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Notification -->
+<div class="toast" id="toast"></div>
 
 <script src="/js/app.js"></script>
 </body>

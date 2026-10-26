@@ -19,6 +19,7 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/products', require('./routes/products'));
 app.use('/api/categories', require('./routes/categories'));
 app.use('/api/settings', require('./routes/settings'));
+app.use('/api/inquiries', require('./routes/inquiries'));
 
 // Serve frontend for all non-API routes
 app.get('/{*path}', (req, res) => {

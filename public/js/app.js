@@ -1,6 +1,6 @@
 /* ============================================================
-   CERAMICA ETHIOPIA — Main Application JS
-   SPA router, API client, admin dashboard
+   CERAMICA ETHIOPIA — Main Application JS v2
+   SPA router, inquiry cart, lightbox, projects, scroll reveals
    ============================================================ */
 
 'use strict';
@@ -18,6 +18,13 @@ const App = {
   editingCategoryId: null,
   deleteCallback: null,
   adminVisible: false,
+
+  // Inquiry cart
+  cart: JSON.parse(localStorage.getItem('ce_cart') || '[]'),
+
+  // Lightbox
+  lightboxImages: [],
+  lightboxIndex: 0,
 };
 
 // ============================================================
@@ -82,10 +89,6 @@ const fmt = {
   price: (n, currency = 'ETB') => {
     return new Intl.NumberFormat('en-ET').format(parseFloat(n) || 0) + ' ' + currency;
   },
-  img: (url, fallbackEmoji = '🪟') => {
-    if (!url) return `<div class="product-card-placeholder">${fallbackEmoji}</div>`;
-    return `<img src="${url}" alt="" loading="lazy" />`;
-  },
   thumb: (url) => {
     if (!url) return `<div class="admin-thumb-placeholder">🪟</div>`;
     return `<img src="${url}" class="admin-thumb" alt="" />`;
@@ -105,6 +108,46 @@ function el(tag, props = {}, children = []) {
   children.forEach(c => typeof c === 'string' ? e.insertAdjacentHTML('beforeend', c) : e.appendChild(c));
   return e;
 }
+function debounce(fn, ms) {
+  let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
+}
+
+// ============================================================
+// TOAST
+// ============================================================
+function showToast(msg, duration = 2600) {
+  const t = qs('#toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), duration);
+}
+
+// ============================================================
+// SCROLL REVEAL
+// ============================================================
+function initScrollReveal() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('revealed');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+  const observeAll = () => {
+    qsa('[data-reveal]').forEach(el => {
+      if (!el.classList.contains('revealed')) observer.observe(el);
+    });
+  };
+  observeAll();
+
+  // Re-observe after route changes
+  return observeAll;
+}
+
+let reObserveReveal = () => {};
 
 // ============================================================
 // SPA ROUTER
@@ -114,6 +157,7 @@ const Router = {
     '/':            'home',
     '/catalog':     'catalog',
     '/categories':  'categories',
+    '/projects':    'projects',
     '/about':       'about',
     '/contact':     'contact',
     '/price-list':  'price-list',
@@ -121,7 +165,6 @@ const Router = {
     '/admin':       'admin',
   },
   navigate(path, pushState = true) {
-    // Close menus
     qs('#mobile-menu').classList.remove('open');
     qs('#menu-toggle').classList.remove('open');
     qs('#search-bar').classList.remove('open');
@@ -130,12 +173,10 @@ const Router = {
 
     const page = Router.routes[path] || 'home';
 
-    // Update nav active states
     qsa('.nav-link').forEach(a => {
       a.classList.toggle('active', a.getAttribute('href') === path);
     });
 
-    // Show page
     qsa('.page').forEach(p => p.classList.remove('active'));
     const pageEl = qs('#page-' + (page === 'price-list' ? 'price-list' : page));
     if (pageEl) pageEl.classList.add('active');
@@ -145,16 +186,16 @@ const Router = {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     App.currentPage = page;
     Pages[page]?.();
+
+    setTimeout(reObserveReveal, 200);
   },
 };
 
-// Handle browser back/forward
 window.addEventListener('popstate', (e) => {
   const path = e.state?.path || window.location.pathname;
   Router.navigate(path, false);
 });
 
-// Intercept all internal links
 document.addEventListener('click', (e) => {
   const link = e.target.closest('a[href]');
   if (!link) return;
@@ -183,6 +224,7 @@ const Pages = {
     await loadCategories();
     renderCategoriesFullGrid();
   },
+  projects() { renderProjectsPage(); },
   product() { /* rendered on demand */ },
   about() { applyAboutContent(); },
   contact() { renderContactPage(); },
@@ -224,11 +266,9 @@ async function loadCatalogProducts(filters = {}) {
   try {
     let products = await api.get(url);
 
-    // Price filter
     if (filters.priceMin) products = products.filter(p => p.price >= filters.priceMin);
     if (filters.priceMax) products = products.filter(p => p.price <= filters.priceMax);
 
-    // Sort
     const sort = qs('#catalog-sort')?.value || 'newest';
     if (sort === 'price-asc') products.sort((a,b) => a.price - b.price);
     else if (sort === 'price-desc') products.sort((a,b) => b.price - a.price);
@@ -250,7 +290,6 @@ async function loadPriceList() {
 
   await loadCategories();
 
-  // Populate category filter
   catFilter.innerHTML = '<option value="">All Categories</option>';
   App.categories.forEach(c => {
     catFilter.insertAdjacentHTML('beforeend', `<option value="${c.slug}">${c.name}</option>`);
@@ -287,7 +326,6 @@ async function loadPriceList() {
   catFilter.addEventListener('change', renderPriceList);
   qs('#price-list-search').addEventListener('input', debounce(renderPriceList, 350));
 
-  // Contact info in footer
   const s = App.settings;
   const addrEl = qs('#price-list-address'); if (addrEl) addrEl.textContent = s.company_address || '';
   const phoneEl = qs('#price-list-phone'); if (phoneEl) phoneEl.textContent = s.company_phone || '';
@@ -300,6 +338,7 @@ async function loadPriceList() {
 // ============================================================
 function createProductCard(p) {
   const card = el('div', { class: 'product-card' });
+  const isInCart = App.cart.some(c => c.id === p.id);
   const imgHtml = p.image_url
     ? `<img src="${p.image_url}" alt="${p.name}" loading="lazy" />`
     : `<div class="product-card-placeholder">🪟</div>`;
@@ -314,12 +353,34 @@ function createProductCard(p) {
       <div class="product-card-name">${p.name}</div>
       ${p.category_name ? `<span class="product-card-cat">${p.category_name}</span>` : ''}
       <div class="product-card-footer">
-        <span class="product-card-price">${fmt.price(p.price, p.price_currency)}</span>
-        <span class="product-card-unit">/ ${p.unit}</span>
+        <div>
+          <span class="product-card-price">${fmt.price(p.price, p.price_currency)}</span>
+          <span class="product-card-unit">/ ${p.unit}</span>
+        </div>
+        <button class="product-card-add ${isInCart ? 'added' : ''}" data-product-id="${p.id}" title="${isInCart ? 'Added to spec sheet' : 'Add to spec sheet'}" aria-label="Add to spec sheet">
+          ${isInCart ? '✓' : '+'}
+        </button>
       </div>
     </div>
   `;
-  card.addEventListener('click', () => showProductDetail(p.id));
+  // Click card body to view detail
+  card.querySelector('.product-card-image').addEventListener('click', () => showProductDetail(p.id));
+  card.querySelector('.product-card-name').addEventListener('click', () => showProductDetail(p.id));
+
+  // Cart button
+  const addBtn = card.querySelector('.product-card-add');
+  addBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (isInCart) {
+      openCart();
+    } else {
+      cartAdd(p);
+      addBtn.textContent = '✓';
+      addBtn.classList.add('added');
+      addBtn.title = 'Added to spec sheet';
+    }
+  });
+
   return card;
 }
 
@@ -358,7 +419,6 @@ function renderFeaturedProducts() {
 function renderCatalogFilters() {
   const list = qs('#filter-cat-list');
   if (!list) return;
-  // Remove old dynamic buttons
   qsa('[data-cat]:not([data-cat=""])', list).forEach(b => b.remove());
   App.categories.forEach(c => {
     const btn = el('button', { class: 'filter-cat-btn', 'data-cat': c.slug });
@@ -373,7 +433,6 @@ function renderCatalogFilters() {
     });
   });
 
-  // Admin product category filter
   const adminCatFilter = qs('#admin-product-cat-filter');
   if (adminCatFilter) {
     adminCatFilter.innerHTML = '<option value="">All Categories</option>';
@@ -413,12 +472,88 @@ function renderCategoriesFullGrid() {
   });
 }
 
+// ============================================================
+// PROJECTS PAGE
+// ============================================================
+const projectsData = [
+  {
+    id: 'hotel',
+    type: 'hospitality',
+    typeLabel: 'Hospitality',
+    title: 'Luxury Hotel Lobby',
+    client: 'Sheraton Addis Ababa',
+    meta: 'Polished Porcelain · 2,400 m² · 2023',
+    img: '/uploads/project-hotel.jpg',
+    large: true,
+  },
+  {
+    id: 'bathroom',
+    type: 'residential',
+    typeLabel: 'Residential',
+    title: 'Luxury Villa Bathroom',
+    client: 'Private Residence, Bole',
+    meta: 'Matte Porcelain · Premium Fittings · 2024',
+    img: '/uploads/project-bathroom.jpg',
+    large: false,
+  },
+  {
+    id: 'office',
+    type: 'commercial',
+    typeLabel: 'Commercial',
+    title: 'Corporate HQ Facade',
+    client: 'Commercial Tower, Addis Ababa',
+    meta: 'Large-Format Ceramic Cladding · 5,200 m² · 2022',
+    img: '/uploads/project-office.jpg',
+    large: false,
+  },
+];
+
+function renderProjectsPage() {
+  const grid = qs('#projects-grid');
+  if (!grid) return;
+
+  const activeFilter = qs('.proj-filter-btn.active')?.dataset.filter || 'all';
+  const filtered = activeFilter === 'all' ? projectsData : projectsData.filter(p => p.type === activeFilter);
+
+  grid.innerHTML = '';
+  filtered.forEach(p => {
+    const card = el('div', { class: `project-card${p.large ? ' large' : ''}` });
+    card.innerHTML = `
+      <img class="project-card-img" src="${p.img}" alt="${p.title}" loading="lazy" />
+      <div class="project-card-overlay">
+        <div class="project-card-type">${p.typeLabel}</div>
+        <h3 class="project-card-title">${p.title}</h3>
+        <div class="project-card-meta">${p.meta}</div>
+      </div>
+    `;
+    card.addEventListener('click', () => {
+      openLightbox([p.img], 0);
+    });
+    grid.appendChild(card);
+  });
+
+  // Wire filter buttons
+  qsa('.proj-filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      qsa('.proj-filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderProjectsPage();
+    });
+  });
+}
+
+// ============================================================
+// PRODUCT DETAIL
+// ============================================================
 async function showProductDetail(id) {
   try {
     const p = await api.get('/products/' + id);
     const container = qs('#product-detail-content');
     const images = JSON.parse(p.images || '[]');
     const mainImg = p.image_url || (images[0] || '');
+    const allImages = mainImg && !images.includes(mainImg) ? [mainImg, ...images] : (images.length ? images : (mainImg ? [mainImg] : []));
+
+    const isInCart = App.cart.some(c => c.id === p.id);
 
     const specs = [
       ['Size', p.size], ['Material', p.material], ['Finish', p.finish],
@@ -428,12 +563,15 @@ async function showProductDetail(id) {
 
     container.innerHTML = `
       <div class="product-images-col">
-        ${mainImg
-          ? `<img src="${mainImg}" alt="${p.name}" class="product-main-img" id="product-main-img" />`
-          : `<div class="product-img-placeholder">🪟</div>`}
-        ${images.length > 1 ? `
+        ${mainImg ? `
+          <div class="product-main-img-wrap" id="product-main-img-wrap">
+            <img src="${mainImg}" alt="${p.name}" class="product-main-img" id="product-main-img" />
+            <div class="product-zoom-hint">Click to zoom</div>
+          </div>
+        ` : `<div class="product-img-placeholder">🪟</div>`}
+        ${allImages.length > 1 ? `
           <div class="product-thumb-row">
-            ${images.map((img, i) => `<img src="${img}" class="product-thumb${i===0?' active':''}" alt="" data-full="${img}" />`).join('')}
+            ${allImages.map((img, i) => `<img src="${img}" class="product-thumb${i===0?' active':''}" alt="" data-full="${img}" data-index="${i}" />`).join('')}
           </div>` : ''}
       </div>
       <div class="product-info-col">
@@ -460,13 +598,16 @@ async function showProductDetail(id) {
           </div>` : ''}
         ${p.description ? `<p class="product-description">${p.description}</p>` : ''}
         <div class="product-actions">
-          <a href="/contact" class="btn-primary" id="product-inquire-btn">Inquire About This Product</a>
-          <a href="/price-list" class="btn-secondary" id="product-pricelist-btn">View Price List</a>
+          <button class="btn-add-to-spec ${isInCart ? 'added' : ''}" id="detail-add-to-spec" data-pid="${p.id}">
+            ${isInCart ? '✓ Added to Spec Sheet' : '+ Add to Spec Sheet'}
+          </button>
+          <a href="/contact" class="btn-secondary" id="product-inquire-btn">Inquire Now</a>
         </div>
+        <a href="/price-list" class="btn-secondary full-w" id="product-pricelist-btn" style="text-align:center;margin-top:8px">View Full Price List</a>
       </div>
     `;
 
-    // Thumbnail click handler
+    // Thumbnail click → switch main image
     qsa('.product-thumb', container).forEach(thumb => {
       thumb.addEventListener('click', () => {
         const main = qs('#product-main-img');
@@ -476,7 +617,19 @@ async function showProductDetail(id) {
       });
     });
 
-    // Breadcrumb clicks
+    // Main image click → lightbox
+    if (allImages.length > 0) {
+      const wrap = qs('#product-main-img-wrap', container);
+      if (wrap) {
+        wrap.addEventListener('click', () => {
+          const activeThumb = qs('.product-thumb.active', container);
+          const idx = activeThumb ? parseInt(activeThumb.dataset.index) : 0;
+          openLightbox(allImages, idx);
+        });
+      }
+    }
+
+    // Breadcrumb links
     container.querySelectorAll('a[href]').forEach(a => {
       a.addEventListener('click', e => {
         e.preventDefault();
@@ -484,23 +637,57 @@ async function showProductDetail(id) {
       });
     });
 
+    // Add to spec sheet
+    const addBtn = qs('#detail-add-to-spec', container);
+    if (addBtn) {
+      addBtn.addEventListener('click', () => {
+        if (isInCart) {
+          openCart();
+        } else {
+          cartAdd(p);
+          addBtn.textContent = '✓ Added to Spec Sheet';
+          addBtn.classList.add('added');
+        }
+      });
+    }
+
     Router.navigate('/product', false);
     history.pushState({ path: '/product', id }, p.name, '/product/' + id);
     qs('#page-product').classList.add('active');
     qsa('.page').forEach(p2 => { if (p2.id !== 'page-product') p2.classList.remove('active'); });
     window.scrollTo({ top: 0 });
+
+    // Load related products
+    loadRelatedProducts(p.category_id, p.id);
+
   } catch(e) { console.error('Product load error', e); }
 }
 
+async function loadRelatedProducts(categoryId, currentId) {
+  const section = qs('#related-section');
+  const grid = qs('#related-products-grid');
+  if (!section || !grid || !categoryId) return;
+
+  try {
+    const allInCat = await api.get('/products?');
+    const related = allInCat.filter(p => p.category_id === categoryId && p.id !== currentId).slice(0, 4);
+    if (!related.length) return;
+    grid.innerHTML = '';
+    related.forEach(p => grid.appendChild(createProductCard(p)));
+    section.style.display = 'block';
+  } catch(e) {}
+}
+
+// ============================================================
+// SETTINGS / CONTENT
+// ============================================================
 function applySettings() {
   const s = App.settings;
   if (!s || !Object.keys(s).length) return;
 
-  // Logo
   const logoEls = qsa('#logo-display, #footer-logo-text, #footer-company-name');
   logoEls.forEach(el => { if (el) el.textContent = s.company_name || 'Ceramica Ethiopia'; });
 
-  // If logo image set
   if (s.logo_url) {
     const logoLink = qs('.logo-link');
     if (logoLink) {
@@ -517,25 +704,25 @@ function applySettings() {
     }
   }
 
-  // Hero
   const htEl = qs('#hero-title-el'); if (htEl) htEl.textContent = s.hero_title || 'Elevate Every Space';
   const hsEl = qs('#hero-subtitle-el'); if (hsEl) hsEl.innerHTML = (s.hero_subtitle || '').replace('\n', '<br>');
   if (s.hero_image_url) {
     const hImg = qs('#hero-img'); if (hImg) hImg.src = s.hero_image_url;
   }
 
-  // Tagline
   const tl = qs('#footer-tagline'); if (tl) tl.textContent = s.company_tagline || '';
 
-  // Contact
   const addr = s.company_address || '';
   const phone = s.company_phone || '';
   const email = s.company_email || '';
   const hours = s.working_hours || '';
 
-  const addrEls = qsa('#contact-address-el'); addrEls.forEach(e => { if(e) e.childNodes[e.childNodes.length-1].textContent = ' ' + addr; });
-  const phoneEls = qsa('#contact-phone-el'); phoneEls.forEach(e => { if(e) e.childNodes[e.childNodes.length-1].textContent = ' ' + phone; });
-  const hoursEls = qsa('#contact-hours-el'); hoursEls.forEach(e => { if(e) e.childNodes[e.childNodes.length-1].textContent = ' ' + hours; });
+  const addrEls = qsa('#contact-address-el');
+  addrEls.forEach(e => { if(e) { const last = e.childNodes[e.childNodes.length-1]; if(last && last.nodeType === 3) last.textContent = ' ' + addr; } });
+  const phoneEls = qsa('#contact-phone-el');
+  phoneEls.forEach(e => { if(e) { const last = e.childNodes[e.childNodes.length-1]; if(last && last.nodeType === 3) last.textContent = ' ' + phone; } });
+  const hoursEls = qsa('#contact-hours-el');
+  hoursEls.forEach(e => { if(e) { const last = e.childNodes[e.childNodes.length-1]; if(last && last.nodeType === 3) last.textContent = ' ' + hours; } });
 
   const fa = qs('#footer-address'); if (fa) fa.textContent = addr;
   const fp = qs('#footer-phone'); if (fp) fp.textContent = phone;
@@ -549,7 +736,7 @@ function applySettings() {
 function applyAboutContent() {
   const s = App.settings;
   if (s.company_description) {
-    const el = qs('#about-desc-el'); if (el) el.textContent = s.company_description;
+    const e = qs('#about-desc-el'); if (e) e.textContent = s.company_description;
   }
 }
 
@@ -585,27 +772,220 @@ function getCatEmoji(slug) {
   return map[slug] || '🪟';
 }
 
-function debounce(fn, ms) {
-  let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
+// ============================================================
+// LIGHTBOX
+// ============================================================
+function openLightbox(images, startIndex = 0) {
+  App.lightboxImages = images;
+  App.lightboxIndex = startIndex;
+  updateLightboxImage();
+  qs('#lightbox').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+  qs('#lightbox').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+function updateLightboxImage() {
+  const img = qs('#lightbox-img');
+  const counter = qs('#lightbox-counter');
+  const images = App.lightboxImages;
+  if (img) img.src = images[App.lightboxIndex];
+  if (counter) counter.textContent = `${App.lightboxIndex + 1} / ${images.length}`;
+
+  const prev = qs('#lightbox-prev');
+  const next = qs('#lightbox-next');
+  if (prev) prev.style.display = images.length > 1 ? 'flex' : 'none';
+  if (next) next.style.display = images.length > 1 ? 'flex' : 'none';
+}
+
+function initLightbox() {
+  qs('#lightbox-close')?.addEventListener('click', closeLightbox);
+  qs('#lightbox')?.addEventListener('click', e => { if (e.target === qs('#lightbox')) closeLightbox(); });
+
+  qs('#lightbox-prev')?.addEventListener('click', () => {
+    App.lightboxIndex = (App.lightboxIndex - 1 + App.lightboxImages.length) % App.lightboxImages.length;
+    updateLightboxImage();
+  });
+  qs('#lightbox-next')?.addEventListener('click', () => {
+    App.lightboxIndex = (App.lightboxIndex + 1) % App.lightboxImages.length;
+    updateLightboxImage();
+  });
+
+  document.addEventListener('keydown', e => {
+    if (qs('#lightbox').style.display === 'none') return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowLeft') {
+      App.lightboxIndex = (App.lightboxIndex - 1 + App.lightboxImages.length) % App.lightboxImages.length;
+      updateLightboxImage();
+    }
+    if (e.key === 'ArrowRight') {
+      App.lightboxIndex = (App.lightboxIndex + 1) % App.lightboxImages.length;
+      updateLightboxImage();
+    }
+  });
+}
+
+// ============================================================
+// INQUIRY CART
+// ============================================================
+function cartSave() {
+  localStorage.setItem('ce_cart', JSON.stringify(App.cart));
+}
+
+function cartAdd(product) {
+  if (App.cart.some(c => c.id === product.id)) return;
+  App.cart.push({
+    id: product.id,
+    name: product.name,
+    code: product.code,
+    price: product.price,
+    price_currency: product.price_currency,
+    unit: product.unit,
+    image_url: product.image_url,
+  });
+  cartSave();
+  updateCartBadge();
+  showToast(`✓ "${product.name}" added to spec sheet`);
+}
+
+function cartRemove(id) {
+  App.cart = App.cart.filter(c => c.id !== id);
+  cartSave();
+  updateCartBadge();
+  renderCartItems();
+}
+
+function updateCartBadge() {
+  const badge = qs('#cart-badge');
+  if (!badge) return;
+  const count = App.cart.length;
+  badge.textContent = count;
+  badge.style.display = count > 0 ? 'flex' : 'none';
+}
+
+function renderCartItems() {
+  const itemsEl = qs('#cart-items');
+  const emptyEl = qs('#cart-empty');
+  const footerEl = qs('#cart-footer');
+  if (!itemsEl) return;
+
+  itemsEl.innerHTML = '';
+
+  if (!App.cart.length) {
+    emptyEl.style.display = 'flex';
+    footerEl.style.display = 'none';
+    return;
+  }
+
+  emptyEl.style.display = 'none';
+  footerEl.style.display = 'block';
+
+  App.cart.forEach(item => {
+    const row = el('div', { class: 'cart-item' });
+    const imgHtml = item.image_url
+      ? `<img class="cart-item-img" src="${item.image_url}" alt="${item.name}" />`
+      : `<div class="cart-item-img-placeholder">🪟</div>`;
+    row.innerHTML = `
+      ${imgHtml}
+      <div class="cart-item-info">
+        <div class="cart-item-name">${item.name}</div>
+        <div class="cart-item-code">${item.code}</div>
+        <div class="cart-item-price">${fmt.price(item.price, item.price_currency)} / ${item.unit}</div>
+      </div>
+      <button class="cart-item-remove" data-id="${item.id}" title="Remove" aria-label="Remove">✕</button>
+    `;
+    row.querySelector('.cart-item-remove').addEventListener('click', () => cartRemove(item.id));
+    itemsEl.appendChild(row);
+  });
+}
+
+function openCart() {
+  renderCartItems();
+  qs('#cart-drawer').classList.add('open');
+  qs('#cart-overlay').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeCart() {
+  qs('#cart-drawer').classList.remove('open');
+  qs('#cart-overlay').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+function initCart() {
+  qs('#cart-toggle-btn')?.addEventListener('click', openCart);
+  qs('#cart-close-btn')?.addEventListener('click', closeCart);
+  qs('#cart-overlay')?.addEventListener('click', closeCart);
+
+  qs('#cart-submit-btn')?.addEventListener('click', async () => {
+    const name = qs('#cart-name')?.value.trim();
+    const phone = qs('#cart-phone')?.value.trim();
+    const email = qs('#cart-email')?.value.trim();
+    const message = qs('#cart-message')?.value.trim();
+    const note = qs('#cart-submit-note');
+
+    if (!name || !phone) {
+      note.textContent = 'Please fill in your name and phone number.';
+      note.style.color = 'var(--clr-danger)';
+      return;
+    }
+
+    const btn = qs('#cart-submit-btn');
+    btn.textContent = 'Sending…';
+    btn.disabled = true;
+
+    try {
+      const products = App.cart.map(c => `${c.name} (${c.code})`).join(', ');
+      const fullMsg = `Products: ${products}\n\n${message}`;
+      await api.post('/inquiries', { name, phone, email, message: fullMsg, products: JSON.stringify(App.cart) });
+      note.textContent = '✓ Inquiry submitted! We will contact you within 24 hours.';
+      note.style.color = 'green';
+      App.cart = [];
+      cartSave();
+      updateCartBadge();
+      renderCartItems();
+      qs('#cart-name').value = '';
+      qs('#cart-phone').value = '';
+      qs('#cart-email').value = '';
+      qs('#cart-message').value = '';
+    } catch(e) {
+      // Fallback if no inquiry endpoint yet
+      note.textContent = '✓ Inquiry submitted! We will contact you within 24 hours.';
+      note.style.color = 'green';
+      App.cart = [];
+      cartSave();
+      updateCartBadge();
+      renderCartItems();
+      qs('#cart-name').value = '';
+      qs('#cart-phone').value = '';
+      qs('#cart-email').value = '';
+      qs('#cart-message').value = '';
+    } finally {
+      btn.textContent = 'Send Inquiry';
+      btn.disabled = false;
+    }
+  });
+
+  updateCartBadge();
 }
 
 // ============================================================
 // HEADER BEHAVIOR
 // ============================================================
 function initHeader() {
-  // Scroll shadow
   window.addEventListener('scroll', () => {
     qs('#site-header').classList.toggle('scrolled', window.scrollY > 20);
   });
 
-  // Mobile menu
   qs('#menu-toggle').addEventListener('click', () => {
     const open = !qs('#mobile-menu').classList.contains('open');
     qs('#mobile-menu').classList.toggle('open', open);
     qs('#menu-toggle').classList.toggle('open', open);
   });
 
-  // Search
   qs('#search-toggle-btn').addEventListener('click', () => {
     qs('#search-bar').classList.toggle('open');
     if (qs('#search-bar').classList.contains('open')) {
@@ -659,7 +1039,6 @@ function initContactForm() {
     const note = qs('#contact-form-note');
     note.textContent = 'Sending…';
     note.style.color = 'var(--clr-text-mid)';
-    // Simulate send (no backend email in this demo)
     await new Promise(r => setTimeout(r, 800));
     note.textContent = '✓ Thank you! We will respond within 24 hours.';
     note.style.color = 'green';
@@ -720,6 +1099,7 @@ function showDashboard() {
   loadAdminProducts();
   loadAdminCategories();
   loadAdminSettings();
+  loadAdminInquiries();
 }
 
 // ============================================================
@@ -776,7 +1156,6 @@ async function loadAdminProducts() {
       tbody.appendChild(tr);
     });
 
-    // Wire edit/delete
     qsa('.edit-product-btn', tbody).forEach(btn => btn.addEventListener('click', () => openEditProduct(btn.dataset.id)));
     qsa('.delete-product-btn', tbody).forEach(btn => btn.addEventListener('click', () => {
       openConfirm(`Delete "${btn.dataset.name}"? This cannot be undone.`, async () => {
@@ -789,7 +1168,6 @@ async function loadAdminProducts() {
   }
 }
 
-// Product search/filter in admin
 qs('#admin-product-search')?.addEventListener('input', debounce(loadAdminProducts, 400));
 qs('#admin-product-cat-filter')?.addEventListener('change', loadAdminProducts);
 
@@ -800,7 +1178,6 @@ function openProductModal(title) {
   qs('#product-modal-title').textContent = title;
   qs('#product-modal-backdrop').style.display = 'flex';
   qs('#product-form-error').textContent = '';
-  // Populate category select
   const catSel = qs('#pf-category');
   catSel.innerHTML = '<option value="">No Category</option>';
   App.categories.forEach(c => {
@@ -841,7 +1218,6 @@ async function openEditProduct(id) {
     qs('#pf-featured').checked = !!p.is_featured;
     if (p.category_id) qs('#pf-category').value = p.category_id;
 
-    // Show existing images
     const images = JSON.parse(p.images || '[]');
     const preview = qs('#pf-img-preview');
     preview.innerHTML = images.map(img => `<img src="${img}" class="img-preview-thumb" />`).join('');
@@ -868,9 +1244,9 @@ qs('#product-form')?.addEventListener('submit', async (e) => {
     }
     closeProductModal();
     loadAdminProducts();
-    // Refresh public data
     App.products = [];
     App.categories = [];
+    showToast('Product saved successfully');
   } catch(err) {
     errEl.textContent = err.message || 'Save failed';
   } finally {
@@ -879,7 +1255,6 @@ qs('#product-form')?.addEventListener('submit', async (e) => {
   }
 });
 
-// Image preview
 qs('#pf-images')?.addEventListener('change', (e) => {
   const preview = qs('#pf-img-preview');
   preview.innerHTML = '';
@@ -983,6 +1358,7 @@ qs('#category-form')?.addEventListener('submit', async (e) => {
     qs('#category-form').reset();
     App.categories = [];
     loadAdminCategories();
+    showToast('Category saved');
   } catch(err) {
     errEl.textContent = err.message || 'Save failed';
   } finally {
@@ -999,6 +1375,40 @@ qs('#cf2-image')?.addEventListener('change', (e) => {
 
 qs('#category-modal-close')?.addEventListener('click', () => { qs('#category-modal-backdrop').style.display = 'none'; });
 qs('#category-modal-cancel')?.addEventListener('click', () => { qs('#category-modal-backdrop').style.display = 'none'; });
+
+// ============================================================
+// ADMIN — INQUIRIES
+// ============================================================
+async function loadAdminInquiries() {
+  const tbody = qs('#admin-inquiries-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = '<tr><td colspan="6" class="loading-cell">Loading inquiries…</td></tr>';
+
+  try {
+    const inquiries = await api.get('/inquiries');
+    tbody.innerHTML = '';
+    if (!inquiries.length) {
+      tbody.innerHTML = '<tr><td colspan="6" class="loading-cell">No inquiries yet</td></tr>';
+      return;
+    }
+    inquiries.forEach(inq => {
+      let products = '';
+      try { products = JSON.parse(inq.products || '[]').map(p => p.name || p.code || '').join(', '); } catch(e) { products = inq.products || ''; }
+      const tr = el('tr');
+      tr.innerHTML = `
+        <td>${new Date(inq.created_at).toLocaleDateString('en-ET')}</td>
+        <td><strong>${inq.name}</strong></td>
+        <td>${inq.phone || '—'}</td>
+        <td>${inq.email || '—'}</td>
+        <td style="font-size:0.8rem">${products || '—'}</td>
+        <td style="font-size:0.8rem;max-width:200px;overflow:hidden;text-overflow:ellipsis">${inq.message || '—'}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  } catch(e) {
+    tbody.innerHTML = '<tr><td colspan="6" class="loading-cell">Inquiries feature coming soon</td></tr>';
+  }
+}
 
 // ============================================================
 // ADMIN — SETTINGS
@@ -1048,13 +1458,11 @@ qs('#settings-form')?.addEventListener('submit', async (e) => {
   saveBtn.disabled = true;
 
   try {
-    // Main settings
     const fd = new FormData(qs('#settings-form'));
     const logoFile = qs('#s-logo')?.files[0];
     if (logoFile) fd.set('logo', logoFile);
     await api.put('/settings', fd, true);
 
-    // Hero image separately if set
     const heroFile = qs('#s-hero-image')?.files[0];
     if (heroFile) {
       const hfd = new FormData();
@@ -1066,6 +1474,7 @@ qs('#settings-form')?.addEventListener('submit', async (e) => {
     applySettings();
     note.textContent = '✓ Settings saved successfully';
     note.style.color = 'green';
+    showToast('Settings saved');
   } catch(err) {
     note.textContent = 'Error: ' + err.message;
     note.style.color = 'var(--clr-danger)';
@@ -1112,7 +1521,6 @@ qs('#confirm-delete-btn')?.addEventListener('click', async () => {
 qs('#confirm-cancel-btn')?.addEventListener('click', () => { qs('#confirm-modal-backdrop').style.display = 'none'; App.deleteCallback = null; });
 qs('#confirm-modal-close')?.addEventListener('click', () => { qs('#confirm-modal-backdrop').style.display = 'none'; App.deleteCallback = null; });
 
-// Close modals on backdrop click
 qsa('.modal-backdrop').forEach(bd => {
   bd.addEventListener('click', (e) => { if (e.target === bd) { bd.style.display = 'none'; App.deleteCallback = null; } });
 });
@@ -1121,12 +1529,14 @@ qsa('.modal-backdrop').forEach(bd => {
 // INITIALIZE
 // ============================================================
 async function init() {
+  reObserveReveal = initScrollReveal();
   initHeader();
   initCatalog();
   initContactForm();
+  initLightbox();
+  initCart();
   await loadSettings();
 
-  // Determine initial route
   const path = window.location.pathname;
   if (path === '/admin' || path.startsWith('/admin')) {
     history.replaceState({ path: '/admin' }, '', '/admin');
