@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ceramica Ethiopia — Premium Tiles & Bathroom Solutions</title>
+  <meta name="description" content="Ethiopia's premier supplier of ceramic tiles, porcelain, sanitary ware, faucets, and complete bathroom solutions. Trusted by architects and procurement officers." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/main.css" />
+</head>
+<body>
+
+<!-- ============ HEADER ============ -->
+<header id="site-header" class="site-header">
+  <div class="header-inner">
+    <a href="/" class="logo-link" id="nav-home-logo">
+      <span class="logo-text" id="logo-display">Ceramica Ethiopia</span>
+    </a>
+    <nav class="main-nav" id="main-nav">
+      <a href="/" class="nav-link active" id="nav-home">Home</a>
+      <a href="/catalog" class="nav-link" id="nav-catalog">Products</a>
+      <a href="/categories" class="nav-link" id="nav-categories">Categories</a>
+      <a href="/about" class="nav-link" id="nav-about">About</a>
+      <a href="/contact" class="nav-link" id="nav-contact">Contact</a>
+    </nav>
+    <div class="header-actions">
+      <button class="search-toggle" id="search-toggle-btn" aria-label="Search">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      </button>
+      <a href="/admin" class="btn-outline-sm" id="nav-admin">Admin</a>
+      <button class="menu-toggle" id="menu-toggle" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+  <!-- Search Bar -->
+  <div class="search-bar" id="search-bar">
+    <div class="search-inner">
+      <input type="text" id="global-search-input" placeholder="Search products, codes, materials…" autocomplete="off" />
+      <button id="global-search-btn">Search</button>
+      <button class="search-close" id="search-close-btn">✕</button>
+    </div>
+  </div>
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobile-menu">
+    <a href="/" class="mob-nav-link" id="mob-nav-home">Home</a>
+    <a href="/catalog" class="mob-nav-link" id="mob-nav-catalog">Products</a>
+    <a href="/categories" class="mob-nav-link" id="mob-nav-categories">Categories</a>
+    <a href="/about" class="mob-nav-link" id="mob-nav-about">About</a>
+    <a href="/contact" class="mob-nav-link" id="mob-nav-contact">Contact</a>
+    <a href="/admin" class="mob-nav-link" id="mob-nav-admin">Admin</a>
+  </div>
+</header>
+
+<!-- ============ PAGES ============ -->
+<main id="app-main">
+
+  <!-- ===== HOME PAGE ===== -->
+  <section class="page active" id="page-home">
+    <!-- Hero -->
+    <div class="hero" id="hero-section">
+      <div class="hero-image-wrap">
+        <img src="/uploads/hero-default.jpg" alt="Premium bathroom interior" class="hero-img" id="hero-img" />
+        <div class="hero-overlay"></div>
+      </div>
+      <div class="hero-content">
+        <p class="hero-eyebrow">Made for Ethiopia</p>
+        <h1 class="hero-title" id="hero-title-el">Elevate Every Space</h1>
+        <p class="hero-subtitle" id="hero-subtitle-el">Premium ceramics and porcelain for exceptional interiors.<br>Discover our curated collection.</p>
+        <a href="/catalog" class="btn-primary hero-cta" id="hero-cta-btn">Explore Products</a>
+      </div>
+    </div>
+
+    <!-- Categories Strip -->
+    <section class="section categories-section" id="home-categories">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-label">Our Collections</span>
+          <h2 class="section-title">Browse by Category</h2>
+        </div>
+        <div class="categories-grid" id="home-categories-grid">
+          <!-- Filled by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Featured Products -->
+    <section class="section featured-section bg-light" id="home-featured">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-label">Selection</span>
+          <h2 class="section-title">Featured Products</h2>
+          <a href="/catalog" class="section-link" id="home-view-all-link">View All Products →</a>
+        </div>
+        <div class="products-grid" id="home-featured-grid">
+          <!-- Filled by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Company Introduction -->
+    <section class="section about-strip" id="home-about">
+      <div class="container about-strip-inner">
+        <div class="about-strip-text">
+          <span class="section-label">About Us</span>
+          <h2 class="about-strip-title">Ethiopia's Premier Ceramics Destination</h2>
+          <p class="about-strip-desc" id="home-about-desc">Trusted by architects, interior designers, and procurement officers across the nation. We supply the finest ceramic tiles, porcelain, sanitary ware, and bathroom solutions to elevate every space.</p>
+          <a href="/about" class="btn-secondary" id="home-about-link">Learn More</a>
+        </div>
+        <div class="about-strip-img-wrap">
+          <img src="/uploads/cat-ceramic.jpg" alt="Premium interiors" class="about-strip-img" />
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Strip -->
+    <section class="section contact-strip" id="home-contact-strip">
+      <div class="container contact-strip-inner">
+        <div class="contact-strip-info" id="contact-info-block">
+          <h3 class="contact-strip-title">Visit Our Showroom</h3>
+          <p class="contact-detail" id="contact-address-el"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg> Bole Road, Addis Ababa, Ethiopia</p>
+          <p class="contact-detail" id="contact-phone-el"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8 19.79 19.79 0 01.02 2.18 2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg> +251 11 123 4567</p>
+          <p class="contact-detail" id="contact-hours-el"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Mon – Sat: 8:00 AM – 6:00 PM</p>
+        </div>
+        <div class="contact-strip-cta">
+          <p>Ready to specify our products for your project?</p>
+          <a href="/contact" class="btn-primary" id="home-contact-btn">Get in Touch</a>
+        </div>
+      </div>
+    </section>
+  </section>
+
+  <!-- ===== CATALOG PAGE ===== -->
+  <section class="page" id="page-catalog">
+    <div class="page-hero-bar">
+      <div class="container">
+        <h1 class="page-title">Product Catalog</h1>
+        <p class="page-subtitle">Browse our complete collection of tiles, sanitary ware, and bathroom solutions</p>
+      </div>
+    </div>
+    <div class="container catalog-layout">
+      <!-- Filters Sidebar -->
+      <aside class="catalog-filters" id="catalog-sidebar">
+        <div class="filter-group">
+          <label class="filter-label" for="catalog-search-input">Search</label>
+          <div class="filter-search-wrap">
+            <input type="text" id="catalog-search-input" class="filter-input" placeholder="Name, code, material…" />
+            <button id="catalog-search-btn" class="filter-search-btn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="filter-group">
+          <label class="filter-label">Category</label>
+          <div class="filter-cat-list" id="filter-cat-list">
+            <button class="filter-cat-btn active" data-cat="" id="filter-cat-all">All Products</button>
+            <!-- Filled by JS -->
+          </div>
+        </div>
+        <div class="filter-group">
+          <label class="filter-label">Price Range (ETB)</label>
+          <div class="price-range-row">
+            <input type="number" id="filter-price-min" class="filter-input-sm" placeholder="Min" min="0" />
+            <span>–</span>
+            <input type="number" id="filter-price-max" class="filter-input-sm" placeholder="Max" min="0" />
+          </div>
+          <button class="btn-filter-apply" id="apply-price-filter">Apply</button>
+        </div>
+        <div class="filter-group">
+          <a href="/price-list" class="btn-secondary full-w" id="price-list-link">📄 Download Price List</a>
+        </div>
+      </aside>
+      <!-- Products -->
+      <div class="catalog-content">
+        <div class="catalog-toolbar">
+          <span id="catalog-count-label" class="result-count">Loading…</span>
+          <select id="catalog-sort" class="sort-select">
+            <option value="newest">Newest First</option>
+            <option value="price-asc">Price: Low to High</option>
+            <option value="price-desc">Price: High to Low</option>
+            <option value="name">A – Z</option>
+          </select>
+        </div>
+        <div class="products-grid" id="catalog-grid">
+          <!-- Filled by JS -->
+        </div>
+        <div id="catalog-empty" class="empty-state" style="display:none">
+          <p>No products found. Try adjusting your search or filters.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CATEGORIES PAGE ===== -->
+  <section class="page" id="page-categories">
+    <div class="page-hero-bar">
+      <div class="container">
+        <h1 class="page-title">Collections</h1>
+        <p class="page-subtitle">Explore our product categories</p>
+      </div>
+    </div>
+    <div class="container">
+      <div class="categories-full-grid" id="categories-full-grid">
+        <!-- Filled by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PRODUCT DETAIL PAGE ===== -->
+  <section class="page" id="page-product">
+    <div class="container product-detail-layout" id="product-detail-content">
+      <!-- Filled by JS -->
+    </div>
+  </section>
+
+  <!-- ===== ABOUT PAGE ===== -->
+  <section class="page" id="page-about">
+    <div class="page-hero-bar">
+      <div class="container">
+        <h1 class="page-title">About Us</h1>
+        <p class="page-subtitle">Ethiopia's trusted ceramics and building materials partner</p>
+      </div>
+    </div>
+    <div class="container about-content">
+      <div class="about-grid">
+        <div class="about-text-col">
+          <h2 class="about-section-title">Our Story</h2>
+          <p class="about-para" id="about-desc-el">Ceramica Ethiopia is the nation's leading supplier of premium ceramic tiles, porcelain, sanitary ware, faucets, and complete bathroom solutions. We serve architects, interior designers, contractors, government agencies, and procurement officers with the finest materials from world-class manufacturers.</p>
+          <p class="about-para">Our showroom in Addis Ababa showcases thousands of products, and our team of experts is always ready to assist with product selection, specification, and procurement support.</p>
+          <div class="about-values">
+            <div class="value-item">
+              <span class="value-icon">◆</span>
+              <div><h4>Premium Quality</h4><p>Every product is carefully selected to meet the highest standards of durability and aesthetics.</p></div>
+            </div>
+            <div class="value-item">
+              <span class="value-icon">◆</span>
+              <div><h4>Transparent Pricing</h4><p>Clear, honest pricing with no hidden costs. Our price lists are always up to date.</p></div>
+            </div>
+            <div class="value-item">
+              <span class="value-icon">◆</span>
+              <div><h4>Expert Support</h4><p>Our specialists guide you from selection to installation for every project size.</p></div>
+            </div>
+          </div>
+        </div>
+        <div class="about-image-col">
+          <img src="/uploads/cat-sanitary.jpg" alt="Our showroom" class="about-main-img" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CONTACT PAGE ===== -->
+  <section class="page" id="page-contact">
+    <div class="page-hero-bar">
+      <div class="container">
+        <h1 class="page-title">Contact</h1>
+        <p class="page-subtitle">We'd love to hear from you</p>
+      </div>
+    </div>
+    <div class="container contact-layout">
+      <div class="contact-info-col">
+        <h3 class="contact-col-title">Get in Touch</h3>
+        <div class="contact-details-list" id="contact-details-list">
+          <!-- Filled by JS -->
+        </div>
+      </div>
+      <div class="contact-form-col">
+        <h3 class="contact-col-title">Send a Message</h3>
+        <form id="contact-form" class="contact-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="cf-name">Full Name *</label>
+              <input type="text" id="cf-name" required placeholder="Your name" />
+            </div>
+            <div class="form-group">
+              <label for="cf-email">Email</label>
+              <input type="email" id="cf-email" placeholder="your@email.com" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="cf-phone">Phone</label>
+            <input type="tel" id="cf-phone" placeholder="+251 9X XXX XXXX" />
+          </div>
+          <div class="form-group">
+            <label for="cf-subject">Subject</label>
+            <input type="text" id="cf-subject" placeholder="Product inquiry, quotation request…" />
+          </div>
+          <div class="form-group">
+            <label for="cf-message">Message *</label>
+            <textarea id="cf-message" rows="5" required placeholder="Tell us about your project or inquiry…"></textarea>
+          </div>
+          <button type="submit" class="btn-primary" id="contact-submit-btn">Send Message</button>
+          <p class="form-note" id="contact-form-note"></p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PRICE LIST PAGE ===== -->
+  <section class="page" id="page-price-list">
+    <div class="page-hero-bar">
+      <div class="container">
+        <h1 class="page-title">Price List</h1>
+        <p class="page-subtitle">Complete product price catalog — suitable for procurement and government use</p>
+      </div>
+    </div>
+    <div class="container">
+      <div class="price-list-toolbar">
+        <div class="price-filter-row">
+          <select id="price-list-cat-filter" class="sort-select">
+            <option value="">All Categories</option>
+          </select>
+          <input type="text" id="price-list-search" class="filter-input" placeholder="Search by name or code…" />
+        </div>
+        <button onclick="window.print()" class="btn-secondary" id="print-price-list-btn">🖨️ Print Price List</button>
+      </div>
+      <div class="price-list-header-row">
+        <span>Product Name</span>
+        <span>Code</span>
+        <span>Category</span>
+        <span>Size</span>
+        <span>Unit</span>
+        <span>Price (ETB)</span>
+      </div>
+      <div id="price-list-body">
+        <!-- Filled by JS -->
+      </div>
+      <div class="price-list-footer">
+        <p>Prices are subject to change. Contact us for bulk quotations.</p>
+        <p>Ceramica Ethiopia — <span id="price-list-address"></span></p>
+        <p id="price-list-phone"></p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="site-footer" id="site-footer">
+  <div class="container footer-grid">
+    <div class="footer-brand">
+      <span class="footer-logo" id="footer-logo-text">Ceramica Ethiopia</span>
+      <p class="footer-tagline" id="footer-tagline">Premium Ceramic & Porcelain Solutions</p>
+      <p class="footer-desc">Ethiopia's trusted supplier of premium tiles, sanitary ware, and bathroom solutions for residential, commercial, and government projects.</p>
+    </div>
+    <div class="footer-col">
+      <h4 class="footer-col-title">Quick Links</h4>
+      <a href="/" class="footer-link">Home</a>
+      <a href="/catalog" class="footer-link">Products</a>
+      <a href="/categories" class="footer-link">Categories</a>
+      <a href="/price-list" class="footer-link">Price List</a>
+      <a href="/about" class="footer-link">About Us</a>
+      <a href="/contact" class="footer-link">Contact</a>
+    </div>
+    <div class="footer-col">
+      <h4 class="footer-col-title">Products</h4>
+      <a href="/catalog?cat=ceramic-tiles" class="footer-link">Ceramic Tiles</a>
+      <a href="/catalog?cat=porcelain-tiles" class="footer-link">Porcelain Tiles</a>
+      <a href="/catalog?cat=sanitary-ware" class="footer-link">Sanitary Ware</a>
+      <a href="/catalog?cat=faucets-mixers" class="footer-link">Faucets & Mixers</a>
+      <a href="/catalog?cat=bathroom-appliances" class="footer-link">Bathroom Appliances</a>
+      <a href="/catalog?cat=outdoor-tiles" class="footer-link">Outdoor Tiles</a>
+    </div>
+    <div class="footer-col">
+      <h4 class="footer-col-title">Contact</h4>
+      <p class="footer-contact-item" id="footer-address"></p>
+      <p class="footer-contact-item" id="footer-phone"></p>
+      <p class="footer-contact-item" id="footer-email"></p>
+      <p class="footer-contact-item" id="footer-hours"></p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="container footer-bottom-inner">
+      <p>© <span id="footer-year"></span> <span id="footer-company-name">Ceramica Ethiopia</span>. All rights reserved.</p>
+      <p>Designed for Ethiopian premium ceramics market.</p>
+    </div>
+  </div>
+</footer>
+
+<!-- ============ ADMIN PANEL ============ -->
+<div id="admin-overlay" class="admin-overlay" style="display:none">
+  <!-- Login Screen -->
+  <div id="admin-login-screen" class="admin-login-screen">
+    <div class="admin-login-card">
+      <div class="admin-login-logo">
+        <span>Ceramica Ethiopia</span>
+        <small>Administration</small>
+      </div>
+      <form id="admin-login-form">
+        <div class="form-group">
+          <label for="login-username">Username</label>
+          <input type="text" id="login-username" autocomplete="username" required />
+        </div>
+        <div class="form-group">
+          <label for="login-password">Password</label>
+          <input type="password" id="login-password" autocomplete="current-password" required />
+        </div>
+        <button type="submit" class="btn-primary full-w" id="admin-login-btn">Sign In</button>
+        <p class="form-error" id="login-error"></p>
+      </form>
+      <a href="/" class="back-to-site-link" id="back-to-site-link">← Back to Website</a>
+    </div>
+  </div>
+
+  <!-- Admin Dashboard -->
+  <div id="admin-dashboard" class="admin-dashboard" style="display:none">
+    <aside class="admin-sidebar">
+      <div class="admin-brand">
+        <span class="admin-brand-name">Ceramica</span>
+        <small>Admin Panel</small>
+      </div>
+      <nav class="admin-nav">
+        <a class="admin-nav-link active" data-panel="products" id="admin-nav-products">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          Products
+        </a>
+        <a class="admin-nav-link" data-panel="categories" id="admin-nav-categories">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          Categories
+        </a>
+        <a class="admin-nav-link" data-panel="settings" id="admin-nav-settings">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+          Settings
+        </a>
+      </nav>
+      <button class="admin-logout-btn" id="admin-logout-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+        Logout
+      </button>
+    </aside>
+
+    <main class="admin-content">
+      <!-- Products Panel -->
+      <div class="admin-panel active" id="panel-products">
+        <div class="admin-panel-header">
+          <h2>Products</h2>
+          <button class="btn-primary" id="add-product-btn">+ Add Product</button>
+        </div>
+        <div class="admin-toolbar">
+          <input type="text" id="admin-product-search" class="admin-search" placeholder="Search products…" />
+          <select id="admin-product-cat-filter" class="admin-select">
+            <option value="">All Categories</option>
+          </select>
+        </div>
+        <div class="admin-table-wrap">
+          <table class="admin-table" id="admin-products-table">
+            <thead>
+              <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Code</th>
+                <th>Category</th>
+                <th>Price (ETB)</th>
+                <th>Unit</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="admin-products-tbody">
+              <tr><td colspan="8" class="loading-cell">Loading products…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Categories Panel -->
+      <div class="admin-panel" id="panel-categories">
+        <div class="admin-panel-header">
+          <h2>Categories</h2>
+          <button class="btn-primary" id="add-category-btn">+ Add Category</button>
+        </div>
+        <div class="admin-table-wrap">
+          <table class="admin-table" id="admin-categories-table">
+            <thead>
+              <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Slug</th>
+                <th>Products</th>
+                <th>Order</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="admin-categories-tbody">
+              <tr><td colspan="6" class="loading-cell">Loading categories…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Settings Panel -->
+      <div class="admin-panel" id="panel-settings">
+        <div class="admin-panel-header">
+          <h2>Site Settings</h2>
+        </div>
+        <form id="settings-form" class="settings-form">
+          <div class="settings-section">
+            <h3 class="settings-section-title">Company Information</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="s-company-name">Company Name</label>
+                <input type="text" id="s-company-name" name="company_name" />
+              </div>
+              <div class="form-group">
+                <label for="s-tagline">Tagline</label>
+                <input type="text" id="s-tagline" name="company_tagline" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="s-description">Company Description</label>
+              <textarea id="s-description" name="company_description" rows="3"></textarea>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="s-address">Address</label>
+                <input type="text" id="s-address" name="company_address" />
+              </div>
+              <div class="form-group">
+                <label for="s-phone">Phone</label>
+                <input type="text" id="s-phone" name="company_phone" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="s-email">Email</label>
+                <input type="email" id="s-email" name="company_email" />
+              </div>
+              <div class="form-group">
+                <label for="s-whatsapp">WhatsApp</label>
+                <input type="text" id="s-whatsapp" name="company_whatsapp" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="s-hours">Working Hours</label>
+              <input type="text" id="s-hours" name="working_hours" />
+            </div>
+          </div>
+          <div class="settings-section">
+            <h3 class="settings-section-title">Logo</h3>
+            <div class="form-group">
+              <label for="s-logo">Upload Logo (PNG/SVG recommended)</label>
+              <input type="file" id="s-logo" name="logo" accept="image/*" />
+              <img id="s-logo-preview" src="" alt="" class="logo-preview" style="display:none" />
+            </div>
+          </div>
+          <div class="settings-section">
+            <h3 class="settings-section-title">Homepage Hero</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="s-hero-title">Hero Title</label>
+                <input type="text" id="s-hero-title" name="hero_title" />
+              </div>
+              <div class="form-group">
+                <label for="s-hero-subtitle">Hero Subtitle</label>
+                <input type="text" id="s-hero-subtitle" name="hero_subtitle" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="s-hero-image">Hero Background Image</label>
+              <input type="file" id="s-hero-image" accept="image/*" />
+              <img id="s-hero-preview" src="" alt="" class="logo-preview" style="display:none" />
+            </div>
+          </div>
+          <div class="settings-section">
+            <h3 class="settings-section-title">Security</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="s-current-pw">Current Password</label>
+                <input type="password" id="s-current-pw" autocomplete="current-password" />
+              </div>
+              <div class="form-group">
+                <label for="s-new-pw">New Password</label>
+                <input type="password" id="s-new-pw" autocomplete="new-password" />
+              </div>
+            </div>
+            <button type="button" class="btn-secondary" id="change-pw-btn">Change Password</button>
+            <p class="form-note" id="pw-change-note"></p>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn-primary" id="save-settings-btn">Save Settings</button>
+            <p class="form-note" id="settings-save-note"></p>
+          </div>
+        </form>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- ============ MODALS ============ -->
+<!-- Product Form Modal -->
+<div class="modal-backdrop" id="product-modal-backdrop" style="display:none">
+  <div class="modal" id="product-modal">
+    <div class="modal-header">
+      <h3 id="product-modal-title">Add Product</h3>
+      <button class="modal-close" id="product-modal-close">✕</button>
+    </div>
+    <form id="product-form" class="modal-form" enctype="multipart/form-data">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="pf-name">Product Name *</label>
+          <input type="text" id="pf-name" name="name" required />
+        </div>
+        <div class="form-group">
+          <label for="pf-code">Product Code *</label>
+          <input type="text" id="pf-code" name="code" required placeholder="e.g. CTL-001" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="pf-category">Category</label>
+          <select id="pf-category" name="category_id">
+            <option value="">No Category</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="pf-price">Price (ETB) *</label>
+          <input type="number" id="pf-price" name="price" step="0.01" required min="0" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="pf-unit">Unit</label>
+          <select id="pf-unit" name="unit">
+            <option value="m²">m² (per square meter)</option>
+            <option value="piece">Piece</option>
+            <option value="set">Set</option>
+            <option value="box">Box</option>
+            <option value="pallet">Pallet</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="pf-size">Size / Format</label>
+          <input type="text" id="pf-size" name="size" placeholder="e.g. 60×60 cm" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="pf-material">Material</label>
+          <input type="text" id="pf-material" name="material" placeholder="e.g. Porcelain" />
+        </div>
+        <div class="form-group">
+          <label for="pf-finish">Finish</label>
+          <input type="text" id="pf-finish" name="finish" placeholder="e.g. Polished, Matte" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="pf-color">Color</label>
+          <input type="text" id="pf-color" name="color" placeholder="e.g. Ivory" />
+        </div>
+        <div class="form-group">
+          <label for="pf-origin">Origin</label>
+          <input type="text" id="pf-origin" name="origin" placeholder="e.g. Italy, Spain" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="pf-description">Description</label>
+        <textarea id="pf-description" name="description" rows="3"></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group checkbox-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="pf-published" name="is_published" value="1" checked />
+            Published (visible to public)
+          </label>
+        </div>
+        <div class="form-group checkbox-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="pf-featured" name="is_featured" value="1" />
+            Featured on homepage
+          </label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="pf-images">Product Images (up to 5)</label>
+        <input type="file" id="pf-images" name="images" multiple accept="image/*" />
+        <div class="img-preview-row" id="pf-img-preview"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" id="product-modal-cancel">Cancel</button>
+        <button type="submit" class="btn-primary" id="product-modal-save">Save Product</button>
+      </div>
+      <p class="form-error" id="product-form-error"></p>
+    </form>
+  </div>
+</div>
+
+<!-- Category Form Modal -->
+<div class="modal-backdrop" id="category-modal-backdrop" style="display:none">
+  <div class="modal" id="category-modal">
+    <div class="modal-header">
+      <h3 id="category-modal-title">Add Category</h3>
+      <button class="modal-close" id="category-modal-close">✕</button>
+    </div>
+    <form id="category-form" class="modal-form">
+      <div class="form-group">
+        <label for="cf2-name">Category Name *</label>
+        <input type="text" id="cf2-name" name="name" required />
+      </div>
+      <div class="form-group">
+        <label for="cf2-description">Description</label>
+        <textarea id="cf2-description" name="description" rows="2"></textarea>
+      </div>
+      <div class="form-group">
+        <label for="cf2-order">Display Order</label>
+        <input type="number" id="cf2-order" name="display_order" value="0" min="0" />
+      </div>
+      <div class="form-group">
+        <label for="cf2-image">Category Image</label>
+        <input type="file" id="cf2-image" name="image" accept="image/*" />
+        <img id="cf2-img-preview" src="" alt="" class="logo-preview" style="display:none" />
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" id="category-modal-cancel">Cancel</button>
+        <button type="submit" class="btn-primary" id="category-modal-save">Save Category</button>
+      </div>
+      <p class="form-error" id="category-form-error"></p>
+    </form>
+  </div>
+</div>
+
+<!-- Delete Confirm Modal -->
+<div class="modal-backdrop" id="confirm-modal-backdrop" style="display:none">
+  <div class="modal modal-sm" id="confirm-modal">
+    <div class="modal-header">
+      <h3>Confirm Delete</h3>
+      <button class="modal-close" id="confirm-modal-close">✕</button>
+    </div>
+    <div class="modal-body">
+      <p id="confirm-modal-text">Are you sure you want to delete this item? This action cannot be undone.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" id="confirm-cancel-btn">Cancel</button>
+      <button class="btn-danger" id="confirm-delete-btn">Delete</button>
+    </div>
+  </div>
+</div>
+
+<script src="/js/app.js"></script>
+</body>
+</html>
