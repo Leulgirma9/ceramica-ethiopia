@@ -211,7 +211,9 @@ document.addEventListener('click', (e) => {
 const Pages = {
   async home() {
     await loadCategories();
-    renderHomeCategories();
+    initCollectionsSection();
+    initSpacesSection();
+    initHabitatSection();
     await loadFeaturedProducts();
     applySettings();
   },
@@ -384,29 +386,533 @@ function createProductCard(p) {
   return card;
 }
 
-function renderHomeCategories() {
-  const grid = qs('#home-categories-grid');
+// ============================================================
+// ATLAS CONCORDE — FLAGSHIP COLLECTIONS DATA
+// ============================================================
+const atlasCollections = [
+  {
+    id: 'marvel',
+    name: 'Marvel Calacatta & Onyx',
+    look: 'marble',
+    lookLabel: 'Marble Look',
+    origin: 'Italian Aesthetic · Made for Ethiopia',
+    desc: 'Precious marble-effect porcelain with mirror-polished Lappato Lux and velvety Silk finishes, capturing the noble depth of prestigious Italian Calacatta and Onyx quarries.',
+    img: '/uploads/collection-marble.jpg',
+    format: '120×278 cm Slabs',
+    finishes: ['Polished Lappato', 'Silk Sensitech®', '9mm / 6mm Slabs'],
+    swatches: [
+      { name: 'Bianco Calacatta', color: '#f7f6f2' },
+      { name: 'Onyx Gold Vein', color: '#e8dcbe' },
+      { name: 'Grigio Imperial', color: '#979796' },
+      { name: 'Nero Elegante', color: '#27262b' }
+    ],
+    specs: {
+      'Water Absorption': '< 0.05% (Impermeable)',
+      'Surface Hardness': 'MOHS 7 - High Scratch Resistance',
+      'Available Formats': '120×278 cm, 60×120 cm, 80×80 cm',
+      'Finishes': 'Polished (Lappato), Velvety Silk (Matte)',
+      'Recommended Use': 'Luxury Master Bathrooms, Hotel Atriums, Living Rooms'
+    },
+    filterSlug: 'porcelain-tiles'
+  },
+  {
+    id: 'concrete',
+    name: 'Boost Mineral & Cemento',
+    look: 'concrete',
+    lookLabel: 'Concrete & Industrial',
+    origin: 'Contemporary Minimalist Architecture',
+    desc: 'Sophisticated industrial concrete and raw lime aesthetics with warm undertones, designed for modern villas, lofts, and expansive corporate spaces.',
+    img: '/uploads/collection-concrete.jpg',
+    format: '120×120 cm / 60×120 cm',
+    finishes: ['Sensitech® Matte R10', 'Structured Grip', 'Indoor/Outdoor'],
+    swatches: [
+      { name: 'Chalk White', color: '#f2f0eb' },
+      { name: 'Warm Greige', color: '#cfc9be' },
+      { name: 'Ash Grey', color: '#929291' },
+      { name: 'Carbon Anthracite', color: '#38383a' }
+    ],
+    specs: {
+      'Water Absorption': '< 0.08%',
+      'Surface Tech': 'Sensitech® Anti-Slip Soft Touch',
+      'Available Formats': '120×120 cm, 60×120 cm, 60×60 cm',
+      'Slip Rating': 'R10 Class B / Outdoor R11',
+      'Recommended Use': 'Open-plan Living, Corporate Lobbies, Retail Showrooms'
+    },
+    filterSlug: 'porcelain-tiles'
+  },
+  {
+    id: 'stone',
+    name: 'Pietra Grandiosa & Savoia',
+    look: 'stone',
+    lookLabel: 'Stone Look',
+    origin: 'High-Density Architectural Stoneware',
+    desc: 'Subtle mineral clefts and tactile stone nuances inspired by noble alpine and Mediterranean limestone, providing authentic warmth with enduring porcelain strength.',
+    img: '/uploads/collection-stone.jpg',
+    format: '100×100 cm / 60×120 cm',
+    finishes: ['Natural Sensitech®', 'Outdoor 20mm Paver', 'R11 High Grip'],
+    swatches: [
+      { name: 'Desert Sand', color: '#e4dccf' },
+      { name: 'Pietra Taupe', color: '#b9aba0' },
+      { name: 'Basalt Stone', color: '#6e6d6b' },
+      { name: 'Dark Basalto', color: '#2b2a28' }
+    ],
+    specs: {
+      'Water Absorption': '< 0.05%',
+      'Mechanical Resistance': 'Breaking strength > 2000 N',
+      'Available Formats': '100×100 cm, 60×120 cm, 20mm Paver',
+      'Slip Rating': 'R10 Natural / R11 Structured',
+      'Recommended Use': 'Exterior Cladding, Terraces, Pool Decks, Wellness Spas'
+    },
+    filterSlug: 'porcelain-tiles'
+  },
+  {
+    id: 'wood',
+    name: 'Log Anthology & Nordic Oak',
+    look: 'wood',
+    lookLabel: 'Wood Look',
+    origin: 'Natural Tactile Wood Grain',
+    desc: 'The timeless comfort of raw natural timber combined with the indestructible performance of vitrified porcelain. Never fades, never warps, immune to water.',
+    img: '/uploads/collection-wood.jpg',
+    format: '20×120 cm / 25×150 cm Planks',
+    finishes: ['Micro-relief Grain', 'Velvety Matte Touch', 'Waterproof'],
+    swatches: [
+      { name: 'Nordic Blonde', color: '#e8d9c4' },
+      { name: 'Warm Honey Oak', color: '#cda87c' },
+      { name: 'Cognac Amber', color: '#a77a4a' },
+      { name: 'Smoked Walnut', color: '#684d34' }
+    ],
+    specs: {
+      'Water Absorption': '0.00% (Completely Impervious)',
+      'Wear Resistance': 'PEI V - Maximum Foot Traffic',
+      'Available Formats': '20×120 cm Planks, 25×150 cm Planks',
+      'Maintenance': 'Zero Sealing Required, Water-Only Clean',
+      'Recommended Use': 'Master Suites, Executive Corridors, Luxury Lounges'
+    },
+    filterSlug: 'ceramic-tiles'
+  },
+  {
+    id: 'habitat',
+    name: 'Atlas Concorde Habitat Suite',
+    look: 'habitat',
+    lookLabel: 'Habitat Bathroom',
+    origin: 'Integrated Porcelain Sinks & Furniture',
+    desc: 'Seamless monolithic washbasins, vanity surfaces, and wall cladding fabricated entirely from porcelain slabs. Complete architectural continuity for elite bathrooms.',
+    img: '/uploads/collection-habitat.jpg',
+    format: 'Custom Fabricated to Measure',
+    finishes: ['Monolithic Porcelain Joint', 'Anti-Bacterial Glaze', 'Integrated Basin'],
+    swatches: [
+      { name: 'Carrara Pure White', color: '#f6f5f3' },
+      { name: 'Calacatta Gold Slab', color: '#ede3d1' },
+      { name: 'Matte Nero Basalt', color: '#222222' },
+      { name: 'Graphite Stone', color: '#4a4947' }
+    ],
+    specs: {
+      'Hygiene Rating': 'Anti-bacterial, non-porous vitreous china & porcelain',
+      'Stain Resistance': '100% Resistant to cosmetics, acids, boiling water',
+      'Available Elements': 'Integrated Washbasins, Vanity Tops, Wall-Hung Suites',
+      'Custom Sizing': 'Fabricated in Addis Ababa to exact millimetric specs',
+      'Recommended Use': 'Luxury En-Suites, 5-Star Hotel Bathrooms, Executive Spas'
+    },
+    filterSlug: 'sanitary-ware'
+  },
+  {
+    id: '3dwall',
+    name: '3D Wall Relief & Fluted Slabs',
+    look: '3dwall',
+    lookLabel: '3D Wall & Decor',
+    origin: 'Sculptural Architectural Surfaces',
+    desc: 'Ceramic wall surfaces shaped by light and shadow. Sculpted three-dimensional reliefs, geometric fluting, and organic waves create dramatic architectural focal points.',
+    img: '/uploads/collection-3dwall.jpg',
+    format: '50×120 cm / 40×80 cm Slabs',
+    finishes: ['Sculpted Relief', 'Satin Matte Texture', 'Continuous Pattern'],
+    swatches: [
+      { name: 'Pure White Plaster', color: '#faf9f6' },
+      { name: 'Cream Fluted', color: '#ede6d6' },
+      { name: 'Warm Taupe Relief', color: '#c4baa9' },
+      { name: 'Anthracite Blade', color: '#323233' }
+    ],
+    specs: {
+      'Material': 'White-body Ceramic Wall Slabs',
+      'Pattern Continuity': 'Precision edge-aligned tactile geometry',
+      'Available Formats': '50×120 cm, 40×80 cm',
+      'Light Interaction': 'Dynamic shading with ambient & architectural wash lighting',
+      'Recommended Use': 'Bathroom Feature Walls, Reception Backdrops, Dining Accents'
+    },
+    filterSlug: 'ceramic-tiles'
+  }
+];
+
+// ============================================================
+// ATLAS CONCORDE — SPACES & ENVIRONMENTS DATA
+// ============================================================
+const atlasSpaces = [
+  {
+    id: 'bathrooms',
+    name: 'Master Bathrooms & Wellness Spas',
+    tag: 'Wet Zones & En-Suites',
+    desc: 'Transform bathrooms into serene private sanctuaries. Seamless floor-to-ceiling porcelain slabs paired with non-slip Sensitech® shower floors and Habitat integrated washbasins ensure uncompromised hygiene and luxury.',
+    img: '/uploads/project-bathroom.jpg',
+    specs: [
+      { title: 'Slip Resistance', val: 'Sensitech® R10B in wet areas' },
+      { title: 'Water Absorption', val: '< 0.05% Impervious to steam & water' },
+      { title: 'Chemical Resistance', val: 'Resistant to all bathroom cosmetics' },
+      { title: 'Recommended Collections', val: 'Marvel Calacatta, Habitat Basins' }
+    ],
+    recommendedSlug: 'porcelain-tiles'
+  },
+  {
+    id: 'living',
+    name: 'Living Rooms & Architectural Lounges',
+    tag: 'Continuous Expanses',
+    desc: 'Grand living areas demand monumental formats. Large-format 120×278 cm slabs eliminate distracting grout lines, allowing mirror-polished marble veining or tactile wood planks to flow smoothly through the space.',
+    img: '/uploads/collection-concrete.jpg',
+    specs: [
+      { title: 'Format Sizes', val: '120×278 cm and 120×120 cm' },
+      { title: 'Aesthetic Purity', val: 'Rectified edges for minimal 1.5mm joints' },
+      { title: 'Thermal Conductivity', val: 'Ideal for underfloor heating systems' },
+      { title: 'Recommended Collections', val: 'Marvel Calacatta, Boost Mineral' }
+    ],
+    recommendedSlug: 'porcelain-tiles'
+  },
+  {
+    id: 'kitchens',
+    name: 'Kitchens & Culinary Spaces',
+    tag: 'Heavy Daily Use & Hygiene',
+    desc: 'Surfaces that combine exquisite culinary aesthetics with supreme resilience. Porcelain worktops and splashbacks withstand searing hot cookware, knife scratches, grease, and acidic citrus without staining.',
+    img: '/uploads/hero-default.jpg',
+    specs: [
+      { title: 'Heat Resistance', val: 'Withstands direct flame & boiling pots' },
+      { title: 'Stain Resistance', val: 'Class 5 Maximum — wipes clean with water' },
+      { title: 'Food Contact', val: 'Certified non-toxic & zero-bacterial' },
+      { title: 'Recommended Collections', val: 'Boost Mineral, Pietra Savoia' }
+    ],
+    recommendedSlug: 'ceramic-tiles'
+  },
+  {
+    id: 'outdoor',
+    name: 'Terraces, Pools & Outdoor Living',
+    tag: 'All-Weather Exterior Endurance',
+    desc: 'Seamless continuity from interior to exterior patio. Our 20mm extra-thick porcelain pavers withstand extreme Addis Ababa sun, heavy rain, vehicle driveways, and poolside moisture without fading or cracking.',
+    img: '/uploads/collection-stone.jpg',
+    specs: [
+      { title: 'Thickness', val: '20mm Monolithic Heavy-Duty Slabs' },
+      { title: 'Safety Rating', val: 'R11 (A+B+C) High-traction grip' },
+      { title: 'Frost & Sun Resistance', val: '100% UV-stable color fastness' },
+      { title: 'Recommended Collections', val: 'Pietra Grandiosa 20mm' }
+    ],
+    recommendedSlug: 'outdoor-tiles'
+  },
+  {
+    id: 'commercial',
+    name: 'Commercial Towers & Hotel Lobbies',
+    tag: 'High-Footfall Landmark Spaces',
+    desc: 'Designed for commercial excellence: hotel reception atriums, high-end retail boutiques, and corporate headquarters. High wear resistance guarantees pristine visual grandeur through decades of pedestrian traffic.',
+    img: '/uploads/project-hotel.jpg',
+    specs: [
+      { title: 'Traffic Rating', val: 'PEI V & MOHS 8 Maximum Commercial' },
+      { title: 'Breaking Strength', val: '> 3,000 N Extreme load rating' },
+      { title: 'Fire Safety', val: 'Class A1 Incombustible Non-Flammable' },
+      { title: 'Recommended Collections', val: 'Marvel Calacatta, Boost Mineral' }
+    ],
+    recommendedSlug: 'porcelain-tiles'
+  }
+];
+
+// ============================================================
+// ATLAS CONCORDE — COLLECTIONS LOGIC & INTERACTION
+// ============================================================
+let activeCollectionFilter = 'all';
+
+function initCollectionsSection() {
+  const grid = qs('#collections-grid');
+  if (!grid) return;
+
+  renderCollectionsGrid(activeCollectionFilter);
+
+  // Set up filter buttons
+  qsa('.collection-filter-tab').forEach(btn => {
+    btn.onclick = () => {
+      qsa('.collection-filter-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeCollectionFilter = btn.dataset.filter || 'all';
+      renderCollectionsGrid(activeCollectionFilter);
+    };
+  });
+}
+
+function renderCollectionsGrid(filter = 'all') {
+  const grid = qs('#collections-grid');
   if (!grid) return;
   grid.innerHTML = '';
-  const toShow = App.categories.slice(0, 6);
-  toShow.forEach(c => {
-    const card = el('div', { class: 'category-card' });
-    const imgPart = c.image_url
-      ? `<img src="${c.image_url}" alt="${c.name}" loading="lazy" />`
-      : `<div class="category-card-placeholder">${getCatEmoji(c.slug)}</div>`;
+
+  const filtered = filter === 'all'
+    ? atlasCollections
+    : atlasCollections.filter(c => c.look === filter);
+
+  filtered.forEach(col => {
+    const card = el('div', { class: 'collection-card-editorial', 'data-reveal': 'true' });
+
+    const swatchesHtml = col.swatches.map(s => `
+      <span class="swatch-chip" style="background:${s.color}" data-shade="${s.name}" title="${s.name}"></span>
+    `).join('');
+
+    const finishChipsHtml = col.finishes.map((f, i) => `
+      <span class="meta-chip ${i === 0 ? 'accent' : ''}">${f}</span>
+    `).join('');
+
     card.innerHTML = `
-      ${imgPart}
-      <div class="category-card-overlay">
-        <div class="category-card-name">${c.name}</div>
-        <div class="category-card-count">${c.product_count} product${c.product_count !== 1 ? 's' : ''}</div>
+      <div class="collection-visual-wrap">
+        <img src="${col.img}" alt="${col.name}" class="collection-visual-img" loading="lazy" />
+        <span class="collection-look-badge">${col.lookLabel}</span>
+        <span class="collection-format-badge">${col.format}</span>
+      </div>
+      <div class="collection-info-panel">
+        <div class="collection-title-row">
+          <h3 class="collection-series-title">${col.name}</h3>
+        </div>
+        <p class="collection-origin">${col.origin}</p>
+        <p class="collection-editorial-desc">${col.desc}</p>
+        
+        <div class="collection-swatches-strip">
+          <span class="swatches-label">Shades:</span>
+          ${swatchesHtml}
+        </div>
+
+        <div class="collection-meta-tags">
+          ${finishChipsHtml}
+        </div>
+
+        <div class="collection-card-actions">
+          <button class="btn-col-explore" data-explore-col="${col.id}">
+            Discover Collection <span>→</span>
+          </button>
+          <button class="btn-col-quickview" data-quickview-col="${col.id}">
+            Quick Spec
+          </button>
+        </div>
       </div>
     `;
-    card.addEventListener('click', () => {
-      Router.navigate('/catalog');
-      setTimeout(() => filterCatalogBySlug(c.slug), 100);
-    });
+
+    // Action handlers
+    card.querySelector('[data-explore-col]').onclick = (e) => {
+      e.stopPropagation();
+      openCollectionSpotlight(col.id);
+    };
+
+    card.querySelector('[data-quickview-col]').onclick = (e) => {
+      e.stopPropagation();
+      openCollectionSpotlight(col.id);
+    };
+
+    card.onclick = () => {
+      openCollectionSpotlight(col.id);
+    };
+
     grid.appendChild(card);
   });
+
+  setTimeout(reObserveReveal, 100);
+}
+
+// ============================================================
+// ATLAS CONCORDE — SPACES & ENVIRONMENTS LOGIC
+// ============================================================
+let activeSpaceId = 'bathrooms';
+
+function initSpacesSection() {
+  const container = qs('#spaces-interactive');
+  if (!container) return;
+
+  const currentSpace = atlasSpaces.find(s => s.id === activeSpaceId) || atlasSpaces[0];
+
+  const navHtml = atlasSpaces.map(s => `
+    <button class="space-tab-btn ${s.id === currentSpace.id ? 'active' : ''}" data-space-id="${s.id}">
+      ${s.name.split('&')[0].trim()}
+    </button>
+  `).join('');
+
+  const specsHtml = currentSpace.specs.map(spec => `
+    <div class="space-spec-item">
+      <span class="space-spec-title">${spec.title}</span>
+      <span class="space-spec-val">${spec.val}</span>
+    </div>
+  `).join('');
+
+  container.innerHTML = `
+    <div class="spaces-nav">
+      ${navHtml}
+    </div>
+    <div class="spaces-display-card">
+      <div class="space-display-image-wrap">
+        <img src="${currentSpace.img}" alt="${currentSpace.name}" class="space-display-img" loading="lazy" />
+      </div>
+      <div class="space-display-info">
+        <span class="space-type-badge">${currentSpace.tag}</span>
+        <h3 class="space-title">${currentSpace.name}</h3>
+        <p class="space-desc">${currentSpace.desc}</p>
+        <div class="space-specs-list">
+          ${specsHtml}
+        </div>
+        <div class="space-cta-row">
+          <button class="btn-primary" id="btn-space-explore">Explore Space Surfaces →</button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Hook navigation buttons
+  qsa('.space-tab-btn', container).forEach(btn => {
+    btn.onclick = () => {
+      activeSpaceId = btn.dataset.spaceId;
+      initSpacesSection();
+    };
+  });
+
+  const exploreBtn = qs('#btn-space-explore', container);
+  if (exploreBtn) {
+    exploreBtn.onclick = () => {
+      Router.navigate('/catalog');
+      setTimeout(() => filterCatalogBySlug(currentSpace.recommendedSlug), 150);
+    };
+  }
+}
+
+// ============================================================
+// ATLAS CONCORDE — HABITAT SECTION HANDLER
+// ============================================================
+function initHabitatSection() {
+  const exploreBtn = qs('#habitat-explore-btn');
+  if (exploreBtn) {
+    exploreBtn.onclick = () => {
+      Router.navigate('/catalog');
+      setTimeout(() => filterCatalogBySlug('sanitary-ware'), 150);
+    };
+  }
+}
+
+// ============================================================
+// ATLAS CONCORDE — SPOTLIGHT MODAL
+// ============================================================
+function initSpotlightModal() {
+  const modal = qs('#collection-spotlight-modal');
+  const closeBtn = qs('#collection-modal-close');
+  if (!modal) return;
+
+  if (closeBtn) {
+    closeBtn.onclick = () => {
+      modal.style.display = 'none';
+      document.body.style.overflow = '';
+    };
+  }
+
+  modal.onclick = (e) => {
+    if (e.target === modal) {
+      modal.style.display = 'none';
+      document.body.style.overflow = '';
+    }
+  };
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal.style.display === 'flex') {
+      modal.style.display = 'none';
+      document.body.style.overflow = '';
+    }
+  });
+}
+
+async function openCollectionSpotlight(collectionId) {
+  const col = atlasCollections.find(c => c.id === collectionId);
+  if (!col) return;
+
+  const modal = qs('#collection-spotlight-modal');
+  const content = qs('#collection-modal-content');
+  if (!modal || !content) return;
+
+  // Find matching products from in-memory products list or load
+  let matching = [];
+  try {
+    const allProducts = await api.get('/products');
+    matching = allProducts.filter(p => p.category_slug === col.filterSlug).slice(0, 3);
+  } catch(e) {}
+
+  const matchingHtml = matching.length > 0 ? `
+    <div class="col-modal-matching-products">
+      <div class="col-matching-heading">Available in Addis Ababa Stock:</div>
+      <div class="col-matching-list">
+        ${matching.map(p => `
+          <div class="col-matching-item">
+            <div>
+              <span class="col-matching-name">${p.name}</span>
+              <span style="font-size:0.75rem;color:var(--clr-text-light);margin-left:8px;">${p.code} (${p.size || 'Standard'})</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;">
+              <span class="col-matching-price">${fmt.price(p.price, p.price_currency)}/${p.unit}</span>
+              <button class="btn-outline-sm" data-add-spotlight="${p.id}" style="padding:4px 10px;font-size:0.7rem;">+ Spec</button>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  ` : '';
+
+  const specsRowsHtml = Object.entries(col.specs).map(([k, v]) => `
+    <tr>
+      <td>${k}</td>
+      <td>${v}</td>
+    </tr>
+  `).join('');
+
+  content.innerHTML = `
+    <div class="col-modal-grid">
+      <div class="col-modal-visual">
+        <img src="${col.img}" alt="${col.name}" />
+      </div>
+      <div class="col-modal-details">
+        <span class="col-modal-badge">${col.lookLabel} · Atlas Concorde Heritage</span>
+        <h2 class="col-modal-title">${col.name}</h2>
+        <p class="col-modal-lead">${col.desc}</p>
+
+        <table class="col-modal-specs-table">
+          <tbody>
+            ${specsRowsHtml}
+          </tbody>
+        </table>
+
+        ${matchingHtml}
+
+        <div class="col-modal-actions">
+          <button class="btn-primary" id="modal-view-catalog-btn">View All ${col.lookLabel} Products →</button>
+          <a href="/contact" class="btn-secondary">Request Samples</a>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Attach event to view all in catalog
+  qs('#modal-view-catalog-btn', content).onclick = () => {
+    modal.style.display = 'none';
+    document.body.style.overflow = '';
+    Router.navigate('/catalog');
+    setTimeout(() => filterCatalogBySlug(col.filterSlug), 150);
+  };
+
+  // Attach click handler for adding to spec sheet
+  qsa('[data-add-spotlight]', content).forEach(b => {
+    b.onclick = (e) => {
+      e.stopPropagation();
+      const prodId = b.dataset.addSpotlight;
+      const targetProd = matching.find(p => p.id === prodId);
+      if (targetProd) {
+        addToCart(targetProd);
+        b.textContent = '✓ Added';
+        b.style.borderColor = 'var(--clr-accent)';
+        b.style.color = 'var(--clr-accent)';
+      }
+    };
+  });
+
+  modal.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
 }
 
 function renderFeaturedProducts() {
@@ -1535,6 +2041,7 @@ async function init() {
   initContactForm();
   initLightbox();
   initCart();
+  initSpotlightModal();
   await loadSettings();
 
   const path = window.location.pathname;

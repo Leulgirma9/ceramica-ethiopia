@@ -21,9 +21,9 @@ app.use('/api/categories', require('./routes/categories'));
 app.use('/api/settings', require('./routes/settings'));
 app.use('/api/inquiries', require('./routes/inquiries'));
 
-// Serve frontend for all non-API routes
-app.get('/{*path}', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+// Serve frontend SPA for all other routes
+app.use((req, res) => {
+  res.sendFile('index.html', { root: path.join(__dirname, 'public') });
 });
 
 const PORT = process.env.PORT || 3000;
